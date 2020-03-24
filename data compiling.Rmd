@@ -11,6 +11,7 @@ library(sas7bdat)
 library(tidyr)
 library(tidyverse)
 library(SASxport)
+library(dplyr)
 ```
 
 ## load the data
@@ -199,8 +200,8 @@ hh_smoke_99_00 = read.xport("./1999-2000/SMQFAM.XPT") %>%
 
 diet_interview_1999_2000 = read.xport("./1999-2000/DRXIFF.XPT") %>% 
    janitor::clean_names() %>%
-  select(drxiprot, drxitfat, drxisfat, drxipfat, drxichol)
-#cant find sugar variable
+  select(seqn, drxiprot, drxitfat, drxisfat, drxipfat, drxichol)
+#no sugar variable
 
 med_condit_99_00 = read.xport("./1999-2000/MCQ.XPT") %>% 
   janitor::clean_names() %>% 
@@ -240,9 +241,13 @@ med_condit_99_00 = read.xport("./1999-2000/MCQ.XPT") %>%
                   `1` = "yes",
                   `2` = "no",
                   `7` = "refused",
-                  `9` = "dont know")
-  ) %>% 
-  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+                  `9` = "dont know"),
+    mcq230a = as.factor(mcq230a),
+    type_of_cancer = recode(mcq230a,
+                            `16` = "colon",
+                            `31` = "rectal"
+  )) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer, type_of_cancer )
 ```
 
 ```{r import.2001.2002}
@@ -421,7 +426,7 @@ hh_smoke_01_02 = read.xport("./2001-2002/SMQFAM_B.XPT") %>% janitor::clean_names
 diet_interview_01_02 = read.xport("./2001-2002/DRXIFF_B.XPT") %>% 
    janitor::clean_names() %>% 
   mutate() %>% 
-  select(drxiprot, drxisugr, drxitfat, drxisfat, drximfat, drxipfat, drxichol)
+  select(seqn, drxiprot, drxisugr, drxitfat, drxisfat, drximfat, drxipfat, drxichol)
   
 med_condit_01_02 = read.xport("./2001-2002/MCQ_B.XPT") %>% 
   janitor::clean_names() %>% 
@@ -461,9 +466,13 @@ med_condit_01_02 = read.xport("./2001-2002/MCQ_B.XPT") %>%
                   `1` = "yes",
                   `2` = "no",
                   `7` = "refused",
-                  `9` = "dont know")
-  ) %>% 
-  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+                  `9` = "dont know"),
+    mcq230a = as.factor(mcq230a),
+    type_of_cancer = recode(mcq230a,
+                            `16` = "colon",
+                            `31` = "rectal"
+  )) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer, type_of_cancer)
 
 bp_chol_01_02 = read.xport("./2001-2002/BPQ_B.XPT") %>% 
   janitor::clean_names() %>% 
@@ -549,7 +558,12 @@ diabetes_03_04 = read.xport("./2003-2004/DIQ_C.XPT") %>%
 
 
 diet_03_04 = read.xport("./2003-2004/DBQ_C.XPT") %>% 
-  janitor::clean_names() 
+  janitor::clean_names()
+
+diet_interview_03_04 = read.xport("./2003-2004/DR1IFF_C.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate() %>% 
+  select(seqn, dr1iprot, dr1isugr, dr1itfat, dr1isfat, dr1imfat, dr1ipfat, dr1ichol)
 
 immunization_03_04 = read.xport("./2003-2004/IMQ_C.XPT") %>% 
   janitor::clean_names() %>% 
@@ -669,9 +683,13 @@ med_condit_03_04 = read.xport("./2003-2004/MCQ_C.XPT") %>%
                   `1` = "yes",
                   `2` = "no",
                   `7` = "refused",
-                  `9` = "dont know")
-  ) %>% 
-  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+                  `9` = "dont know"),
+    mcq230a = as.factor(mcq230a),
+    type_of_cancer = recode(mcq230a,
+                            `16` = "colon",
+                            `31` = "rectal"
+  )) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer, type_of_cancer )
 
 bp_chol_03_04 = read.xport("./2003-2004/BPQ_C.XPT") %>% 
   janitor::clean_names() %>% 
@@ -759,6 +777,11 @@ diabetes_05_06
 
 diet_05_06 = read.xport("./2005-2006/DBQ_D.XPT") %>% 
   janitor::clean_names() 
+
+diet_interview_05_06 = read.xport("./2005-2006/DR1IFF_D.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate() %>% 
+  select(seqn, dr1iprot, dr1isugr, dr1itfat, dr1isfat, dr1imfat, dr1ipfat, dr1ichol)
 
 immunization_05_06 = read.xport("./2005-2006/IMQ_D.XPT") %>% 
   janitor::clean_names() %>% 
@@ -896,9 +919,13 @@ med_condit_05_06 = read.xport("./2005-2006/MCQ_D.XPT") %>%
                   `1` = "yes",
                   `2` = "no",
                   `7` = "refused",
-                  `9` = "dont know")
-  ) %>% 
-  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+                  `9` = "dont know"),
+    mcq230a = as.factor(mcq230a),
+    type_of_cancer = recode(mcq230a,
+                            `16` = "colon",
+                            `31` = "rectal"
+  )) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer, type_of_cancer )
 
 ```
 
@@ -987,6 +1014,11 @@ diabetes_07_08
 
 diet_07_08 = read.xport("./2007-2008/DBQ_E.XPT") %>% 
   janitor::clean_names() 
+
+diet_interview_07_08 = read.xport("./2007-2008/DR1IFF_E.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate() %>% 
+  select(seqn, dr1iprot, dr1isugr, dr1itfat, dr1isfat, dr1imfat, dr1ipfat, dr1ichol)
 
 immunization_07_08 = read.xport("./2007-2008/IMQ_E.XPT") %>% 
   janitor::clean_names()%>% 
@@ -1115,9 +1147,13 @@ med_condit_07_08 = read.xport("./2007-2008/MCQ_E.XPT") %>%
                   `1` = "yes",
                   `2` = "no",
                   `7` = "refused",
-                  `9` = "dont know")
-  ) %>% 
-  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+                  `9` = "dont know"),
+    mcq230a = as.factor(mcq230a),
+    type_of_cancer = recode(mcq230a,
+                            `16` = "colon",
+                            `31` = "rectal"
+  )) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer, type_of_cancer )
 ```
 
 
@@ -1205,6 +1241,11 @@ diabetes_09_10
 
 diet_09_10 = read.xport("./2009-2010/DBQ_F.XPT") %>% 
   janitor::clean_names() 
+
+diet_interview_09_10 = read.xport("./2009-2010/DR1IFF_F.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate() %>% 
+  select(seqn,dr1iprot, dr1isugr, dr1itfat, dr1isfat, dr1imfat, dr1ipfat, dr1ichol)
 
 immunization_09_10 = read.xport("./2009-2010/IMQ_F.XPT") %>% 
   janitor::clean_names() %>% 
@@ -1337,9 +1378,13 @@ med_condit_09_10 = read.xport("./2009-2010/MCQ_F.XPT") %>%
                   `1` = "yes",
                   `2` = "no",
                   `7` = "refused",
-                  `9` = "dont know")
-  ) %>% 
-  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+                  `9` = "dont know"),
+    mcq230a = as.factor(mcq230a),
+    type_of_cancer = recode(mcq230a,
+                            `16` = "colon",
+                            `31` = "rectal"
+  )) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer, type_of_cancer )
 
 ```
 
@@ -1427,6 +1472,11 @@ bp_chol_11_12 = read.xport("./2011-2012/BPQ_G.XPT") %>%
 
 diet_11_12 = read.xport("./2011-2012/DBQ_G.XPT") %>% 
   janitor::clean_names() 
+
+diet_interview_11_12 = read.xport("./2011-2012/DR1IFF_G.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate() %>% 
+  select(seqn,dr1iprot, dr1isugr, dr1itfat, dr1isfat, dr1imfat, dr1ipfat, dr1ichol)
 
 immunization_11_12 = read.xport("./2011-2012/IMQ_G.XPT") %>% 
   janitor::clean_names() %>% 
@@ -1561,9 +1611,13 @@ med_condit_11_12 = read.xport("./2011-2012/MCQ_G.XPT") %>%
                   `1` = "yes",
                   `2` = "no",
                   `7` = "refused",
-                  `9` = "dont know")
-  ) %>% 
-  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+                  `9` = "dont know"),
+    mcq230a = as.factor(mcq230a),
+    type_of_cancer = recode(mcq230a,
+                            `16` = "colon",
+                            `31` = "rectal"
+  )) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer, type_of_cancer )
 ```
 
 ```{r load.13.14}
@@ -1634,6 +1688,11 @@ diabetes_13_14
 
 diet_13_14 = read.xport("./2013-2014/DBQ_H.XPT") %>% 
   janitor::clean_names() 
+
+diet_interview_13_14 = read.xport("./2013-2014/DR1IFF_H.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate() %>% 
+  select(seqn, dr1iprot, dr1isugr, dr1itfat, dr1isfat, dr1imfat, dr1ipfat, dr1ichol)
 
 immunization_13_14 = read.xport("./2013-2014/IMQ_H.XPT") %>% 
   janitor::clean_names() %>% 
@@ -1769,9 +1828,13 @@ med_condit_13_14 = read.xport("./2013-2014/MCQ_H.XPT") %>%
                   `1` = "yes",
                   `2` = "no",
                   `7` = "refused",
-                  `9` = "dont know")
-  ) %>% 
-  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+                  `9` = "dont know"),
+    mcq230a = as.factor(mcq230a),
+    type_of_cancer = recode(mcq230a,
+                            `16` = "colon",
+                            `31` = "rectal"
+  )) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer, type_of_cancer)
 
 bp_chol_13_14 = read.xport("./2013-2014/BPQ_H.XPT") %>% 
   janitor::clean_names() %>% 
@@ -1858,6 +1921,11 @@ diabetes_15_16
 
 diet_15_16 = read.xport("./2015-2016/DBQ_I.XPT") %>% 
   janitor::clean_names() 
+
+diet_interview_15_16 = read.xport("./2015-2016/DR1IFF_I.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate() %>% 
+  select(seqn, dr1iprot, dr1isugr, dr1itfat, dr1isfat, dr1imfat, dr1ipfat, dr1ichol)
 
 immunization_15_16 = read.xport("./2015-2016/IMQ_I.XPT") %>% 
   janitor::clean_names() %>% 
@@ -2009,9 +2077,13 @@ med_condit_15_16 = read.xport("./2015-2016/MCQ_I.XPT") %>%
                   `1` = "yes",
                   `2` = "no",
                   `7` = "refused",
-                  `9` = "dont know")
+                  `9` = "dont know"),
+    mcq230a = as.factor(mcq230a),
+    type_of_cancer = recode(mcq230a,
+                            `16` = "colon",
+                            `31` = "rectal")
   ) %>% 
-  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer, type_of_cancer )
 ```
 
 ```{r load.17.18}
@@ -2144,21 +2216,27 @@ alcohol = bind_rows(alc_1999_2000, alc_01_02, alc_03_04, alc_05_06, alc_07_08, a
 diabetes = bind_rows(diabetes_1999_2000, diabetes_01_02, diabetes_03_04, diabetes_05_06, diabetes_07_08, diabetes_09_10, diabetes_11_12, diabetes_13_14, diabetes_15_16, diabetes_17_18)
 #demo_1999_2000 issues adding this demographic file
 
-cig_use = bind_rows(adult_smoke_1999_2000, adult_smoke_01_02, adult_smoke_03_04, cig_use_05_06, cig_use_07_08, cig_use_09_10, cig_use_11_12, cig_use_13_14, cig_use_15_16, cig_use_17_18)
+cig_use = bind_rows(adult_smoke_1999_2000, adult_smoke_01_02, adult_smoke_03_04, cig_use_05_06, cig_use_07_08, cig_use_09_10, cig_use_11_12, cig_use_13_14, cig_use_15_16, cig_use_17_18) %>% 
+  select(seqn, smq040, smd070 )
 
 household_smoking = bind_rows(hh_smoke_99_00, hh_smoke_01_02, hh_smoke_03_04, hh_smoke_05_06, hh_smoke_07_08, hh_smoke_09_10, hh_smoke_11_12, hh_smoke_13_14, hh_smoke_15_16, hh_smoke_17_18)
 
 prescrip_drug_info = bind_rows(p_drug_info_1999_2000, p_drug_info_01_02, p_drug_info_03_04, p_drug_info_05_06, p_drug_info_07_08, p_drug_info_09_10, p_drug_info_11_12, p_drug_info_13_14, p_drug_info_15_16)
 
-p_drug = bind_rows(prescrip_drug_1999_2000, prescrip_drug_01_02, prescrip_drug_03_04, prescrip_drug_05_06, prescrip_drug_07_08, prescrip_drug_09_10, prescrip_drug_11_12, prescrip_drug_13_14, prescrip_drug_15_16)
+p_drug = bind_rows(prescrip_drug_1999_2000, prescrip_drug_01_02, prescrip_drug_03_04, prescrip_drug_05_06, prescrip_drug_07_08, prescrip_drug_09_10, prescrip_drug_11_12, prescrip_drug_13_14, prescrip_drug_15_16) %>% 
+  select(seqn, rxd240b, nhcode, rxddrgid, rxddrug)
 
 immunization = bind_rows(immunization_1999_2000, immunization_01_02, immunization_03_04, immunization_05_06, immunization_07_08, immunization_09_10, immunization_11_12, immunization_13_14, immunization_15_16, immunization_17_18)
 
-pa = bind_rows(phys_act_1999_2000, phys_act_01_02, phys_act_03_04, phys_act_05_06, phys_act_07_08, phys_act_09_10, phys_act_11_12, phys_act_13_14, phys_act_15_16, phys_act_17_18)
+pa = bind_rows(phys_act_1999_2000, phys_act_01_02, phys_act_03_04, phys_act_05_06, phys_act_07_08, phys_act_09_10, phys_act_11_12, phys_act_13_14, phys_act_15_16, phys_act_17_18) %>% 
+  select(seqn, moderate, vigorous)
 
 med_cond = bind_rows(med_condit_99_00, med_condit_01_02, med_condit_03_04, med_condit_05_06, med_condit_07_08, med_condit_09_10, med_condit_11_12, med_condit_13_14, med_condit_15_16)
 
 bp_chol = bind_rows(bp_chol_99_00, bp_chol_01_02, bp_chol_03_04, bp_chol_05_06, bp_chol_07_08, bp_chol_09_10, bp_chol_11_12, bp_chol_13_14, bp_chol_15_16, bp_chol_17_18)
+
+diet = bind_rows(diet_interview_1999_2000, diet_interview_01_02 ,diet_interview_03_04, diet_interview_05_06, diet_interview_07_08, diet_interview_09_10, diet_interview_11_12, diet_interview_13_14, diet_interview_15_16)
+  
 
 demo_diabetes = merge(demographics, diabetes,  by = "seqn")
 demo_immunization = merge(demo_diabetes, immunization, by = "seqn")
@@ -2166,11 +2244,68 @@ demo_alc = merge(demo_immunization, alcohol, by = "seqn")
 demo_smoke = merge(demo_alc, cig_use, by = "seqn")
 demo_pa = merge(demo_smoke, pa, by = "seqn")
 #demo_prescrip = merge(demo_pa, prescrip_drug_info, by = "seqn")
+
 demo_hh = merge(demo_pa, household_smoking, by = "seqn")
 demo_pdrug = merge(demo_hh, p_drug, by = "seqn")
 
 demo_med = merge(demo_pdrug, med_cond, by = "seqn")
 
-demo_bp_chol = merge(demo_med, bp_chol, by = "seqn")
+demo_chol = merge(demo_med, bp_chol, by = "seqn")
+demo_all = merge(demo_chol, diet, by = "seqn") 
+  
+
+demo_x = demo_all %>% 
+ distinct(seqn, .keep_all = TRUE) %>% 
+  mutate(race = as.factor(race),
+         diabetes = as.factor(diabetes),
+         fem_hpv = as.factor(fem_hpv),
+         male_hpv = as.factor(male_hpv),
+         heavy_drink = as.factor(heavy_drink),
+         heavy_daily = as.factor(heavy_daily),
+         binge_drink = as.factor(binge_drink),
+         heavy = as.factor(heavy),
+         moderate = as.factor(moderate),
+         vigorous = as.factor(vigorous),
+         home_smoke = as.factor(home_smoke),
+         chd = as.factor(chd),
+         heart_attack = as.factor(heart_attack),
+         stroke = as.factor(stroke),
+         thyroid_prob = as.factor(thyroid_prob),
+         liver_cond = as.factor(liver_cond),
+         ever_cancer = as.factor(ever_cancer),
+         type_of_cancer = as.factor(type_of_cancer),
+         hbp = as.factor(hbp),
+         h_chol = as.factor(h_chol),
+         ) %>% 
+  filter(ever_cancer == "yes",
+         type_of_cancer %in% c("colon", "rectal")) %>% 
+  rename("protein" = drxiprot, 
+         "protein" = dr1iprot,
+          "total fat" = drxitfat, 
+         "total_fat" = dr1itfat,
+         "tot_sat_fa" = drxisfat,
+         "tot_sat_fa" = dr1isfat,
+         "tot_mon_sfa" = dr1imfat,
+         "tot_mon_sfa" = drximfat,
+         "tot_poly_sfa" = dr1ipfat,
+         "tot_poly_sfa" = drxipfat,
+         "sugar" = drxisugr,
+         "sugar"  = dr1isugr,
+         "cholesterol" = dr1ichol,
+         "cholesterol" = drxichol) 
+
+  
 ```
 
+```{r}
+fit_logistic = demo_x %>% 
+  glm(ever_cancer ~ gender + race + diabetes   + chd + heart_attack + stroke + thyroid_prob + liver_cond , data = ., family = binomial())
+
+fit_logistic %>% 
+  broom::tidy() %>% 
+  mutate(OR = exp(estimate)) %>% 
+  select(term, log_OR = estimate, OR, p.value) %>% 
+  knitr::kable(digits = 3)
+```
+
++ hepA_vacc + hepB_vacc + pneumonia + fem_hpv + male_hp + heavy_daily + heavy + moderate + vigorous + home_smoke
