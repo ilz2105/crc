@@ -1,0 +1,2176 @@
+---
+title: "NHANES data compliation"
+author: "lulu zhang"
+date: "3/12/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(sas7bdat)
+library(tidyr)
+library(tidyverse)
+library(SASxport)
+```
+
+## load the data
+
+```{r import.data.1999.2000}
+demo_1999_2000 = read.xport("./1999-2000/DEMO.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(riagendr = as.factor(riagendr),
+    gender = recode(riagendr,
+         `1` = "Male",
+         `2` = "Female"), 
+    ridreth1 = as.factor(ridreth1),
+    race = recode(ridreth1,
+                  `1` = "Mexican American",
+                  `2` = "Other Hispanic",
+                  `3` = "Non_Hispanic White",
+                  `4` = "Non-Hispanic Black",
+                  `5` = "Other Race- Including Multi-Racial")) %>% 
+  select(seqn, gender, race)
+demo_1999_2000
+
+alc_1999_2000 = read.xport("./1999-2000/ALQ.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(alq120q = as.factor(alq120q),
+           p12_mo = recode(alq120q,
+                          `777` = "Refused",
+                          `999` = "Dont Know"),
+         alq120u = as.factor(alq120u),
+         daysdrnk_per_wmoyr = recode(alq120u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq130 = as.factor(alq130),
+         avg_dk_day_pstyr = recode(alq130,
+                                   `77` = "refused",
+                                   `99` = "don't know"),
+         alq140q = as.factor(alq140q),##days have 5 or more drinks/past 12 mos
+         heavy_drink = recode(alq140q,
+                                    `777` = "refused",
+                                       
+                                    `999` = "dont know"),
+         alq140u = as.factor(alq140u),
+         days_per_wmoyr = recode(alq140u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq150 = as.factor(alq150), #Ever have 5 or more drinks every day?
+         heavy_daily = recode(alq150,
+                        `1` = "yes",
+                        `2` = "no",
+                        `7` = "refused",
+                        `9` = "dont know")) %>% 
+  select(seqn, p12_mo, daysdrnk_per_wmoyr, avg_dk_day_pstyr, heavy_drink, days_per_wmoyr, heavy_daily)
+
+bp_chol_99_00 = read.xport("./1999-2000/BPQ.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(bpq020 = as.factor(bpq020),
+         hbp = recode(bpq020,
+                      `1` = "Yes",
+                      `2` = "No",
+                      `7` = "Refused",
+                      `9` = "Don't Know"),
+         bpq080 = as.factor(bpq080),
+         cholesterol = recode(bpq080,
+                      `1` = "Yes",
+                      `2` = "No",
+                      `7` = "Refused",
+                      `9` = "Don't Know")) %>% 
+  select(seqn, hbp, cholesterol)
+
+diabetes_1999_2000 = read.xport("./1999-2000/DIQ.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(diq010 = as.factor(diq010),
+         diabetes = recode(diq010,
+                           `1` = "Yes",
+                           `2` = "NO",
+                           `3` = "Borderline",
+                           `7` = "Refused",
+                           `9` = "Dont know")) %>% 
+  select(seqn, diabetes)
+diabetes_1999_2000
+
+diet_1999_2000 = read.xport("./1999-2000/DBQ.XPT") %>% 
+  janitor::clean_names() 
+
+immunization_1999_2000 = read.xport("./1999-2000/IMQ.XPT") %>% janitor::clean_names() %>% 
+  mutate(imq010 = as.factor(imq010), 
+    hepA_vacc = recode(imq010,
+                        `1` = "Yes, at least 2 doses",
+                        `2` = "less than 2 doses",
+                        `3` = "no doses",
+                        `7` = "refused",
+                        `9` = "dont know"),
+    imq020 = as.factor(imq020),
+    hepB_vacc = recode(imq020,
+                       `1` = "Yes all 3 doses",
+                       `2` = "less than 3 doses",
+                       `3` = "No doses",
+                       `7` = "Refused",
+                       `9` = "don't know"),
+    imq030 = as.factor(imq030),
+    pneumonia = recode(imq030,
+                      `1` = "Yes",
+                      `2` = "No",
+                      `7` = "Refused",
+                      `9` = "Don't Know")) %>% 
+  select(seqn, hepA_vacc, hepB_vacc, pneumonia)
+
+phys_act_1999_2000 = read.xport("./1999-2000/PAQ.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(pad200 = as.factor(pad200),
+         vigorous = recode(pad200,
+                      `1` = "Yes",
+                      `2` = "No",
+                      `3` = "Unable to do activity",
+                      `7` = "Refused",
+                      `9` = "Don't Know"),
+         pad320 = as.factor(pad320),
+        moderate = recode(pad320,
+                      `1` = "Yes",
+                      `2` = "No",
+                      `3` = "Unable to do activity",
+                      `7` = "Refused",
+                      `9` = "Don't Know")) %>% 
+  select(seqn, vigorous, moderate)
+
+p_drug_info_1999_2000 = read.xport("./1999-2000/RXQ_DRUG.XPT") %>% 
+   janitor::clean_names() %>% 
+  filter(rxddrgid == "h00006", 
+         rxddrgid == "d00088",
+         rxddrgid == "d04272",
+         rxddrgid == "d05399",
+         rxddrgid == "d00089",
+         rxddrgid == "d01241",
+         rxddrgid == "d05973",
+         rxddrgid == "d00011",
+         rxddrgid == "d03211",
+         rxddrgid == "d03211",
+         rxddrgid == "d04287",
+         rxddrgid == "d04890",
+         rxddrgid == "d04288",
+         rxddrgid == "d04859",
+         rxddrgid == "d04109",
+         rxddrgid == "d04707",
+         rxddrgid == "d00113",
+         rxddrgid == "d04500",
+         rxddrgid == "d04860",
+         rxddrgid == "d00114",
+         rxddrgid == "d03977",
+         rxddrgid == "d04265",
+         rxddrgid == "d04061",
+         rxddrgid == "d00041",
+         rxddrgid == "d03738")
+#still need to add the other ones from the other variables
+
+prescrip_drug_1999_2000 = read.xport("./1999-2000/RXQ_RX.XPT") %>% 
+   janitor::clean_names()
+
+
+smoke_1999_2000 = read.xport("./1999-2000/SMQ.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate(smq040 = as.factor(smq040),
+         current_smoke = recode(smq040,
+                                `1` = "every day",
+                                `2` = "some days, or",
+                                `3` = "not at all?",
+                                `7` = "refused",
+                                `9` = "dont know")) %>% 
+  select(seqn, current_smoke)
+
+
+
+hh_smoke_99_00 = read.xport("./1999-2000/SMQFAM.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(smd410 = as.factor(smd410),
+         home_smoke = recode(smd410,
+                             `1` = "Yes",
+                             `2` = "no",
+                             `7` = "Refused",
+                             `9` = "dont know")) %>% 
+  select(seqn, home_smoke)
+
+diet_interview_1999_2000 = read.xport("./1999-2000/DRXIFF.XPT") %>% 
+   janitor::clean_names() %>%
+  select(drxiprot, drxitfat, drxisfat, drxipfat, drxichol)
+#cant find sugar variable
+
+med_condit_99_00 = read.xport("./1999-2000/MCQ.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    mcq160c = as.factor(mcq160c),
+    chd = recode(mcq160c, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160e = as.factor(mcq160e),
+    heart_attack = recode(mcq160e, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160f = as.factor(mcq160f),
+    stroke = recode(mcq160f, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160i = as.factor(mcq160i),
+    thyroid_prob = recode(mcq160i, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160l = as.factor(mcq160l),
+    liver_cond = recode(mcq160l, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq220 = as.factor(mcq220),
+    ever_cancer = recode(mcq220, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know")
+  ) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+```
+
+```{r import.2001.2002}
+demo_01_02 = read.xport("./2001-2002/DEMO_B.XPT") %>% 
+  janitor::clean_names()%>% 
+  mutate(riagendr = as.factor(riagendr),
+    gender = recode(riagendr,
+         `1` = "Male",
+         `2` = "Female"), 
+    ridreth1 = as.factor(ridreth1),
+    race = recode(ridreth1,
+                  `1` = "Mexican American",
+                  `2` = "Other Hispanic",
+                  `3` = "Non_Hispanic White",
+                  `4` = "Non-Hispanic Black",
+                  `5` = "Other Race- Including")) %>% 
+  select(seqn, gender, race)
+
+
+alc_01_02 = read.xport("./2001-2002/ALQ_B.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(alq120q = as.factor(alq120q),
+           p12_mo = recode(alq120q,
+                          `777` = "Refused",
+                          `999` = "Dont Know"),
+         alq120u = as.factor(alq120u),
+         daysdrnk_per_wmoyr = recode(alq120u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq130 = as.factor(alq130),
+         avg_dk_day_pstyr = recode(alq130,
+                                   `77` = "refused",
+                                   `99` = "don't know"),
+         alq140q = as.factor(alq140q),##days have 5 or more drinks/past 12 mos
+         heavy_drink = recode(alq140q,
+                                    `777` = "refused",
+                                       
+                                    `999` = "dont know"),
+         alq140u = as.factor(alq140u),
+         days_per_wmoyr = recode(alq140u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq150 = as.factor(alq150), #Ever have 5 or more drinks every day?
+         heavy_daily = recode(alq150,
+                        `1` = "yes",
+                        `2` = "no",
+                        `7` = "refused",
+                        `9` = "dont know")) %>% 
+  select(seqn, p12_mo, daysdrnk_per_wmoyr, avg_dk_day_pstyr, heavy_drink, days_per_wmoyr, heavy_daily)
+         
+
+diabetes_01_02 = read.xport("./2001-2002/DIQ_B.XPT") %>% 
+  janitor::clean_names() %>%
+  mutate(diq010 = as.factor(diq010),
+    diabetes = recode(diq010, 
+                           `1` = "Yes",
+                           `2` = "No",
+                           `3` = "Borderline",
+                           `7` = "Refused",
+                           `9` = "Dont Know"))%>% 
+  select(seqn, diabetes)
+  
+diabetes_01_02
+
+
+immunization_01_02 = read.xport("./2001-2002/IMQ_B.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+     imq010 = as.factor(imq010),
+      hepA_vacc = recode(imq010,
+                        `1` = "Yes, at least 2 doses",
+                        `2` = "less than 2 doses",
+                        `3` = "no doses",
+                        `7` = "refused",
+                        `9` = "dont know"),
+    imq020 = as.factor(imq020),
+    hepB_vacc = recode(imq020,
+                       `1` = "Yes all 3 doses",
+                       `2` = "less than 3 doses",
+                       `3` = "No doses",
+                       `7` = "Refused",
+                       `9` = "don't know")) %>% 
+  select(seqn, hepA_vacc, hepB_vacc)
+
+phys_act_01_02 = read.xport("./2001-2002/PAQ_B.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(pad200 = as.factor(pad200),
+         vigorous = recode(pad200,
+                           `1` = "yes",
+                           `2` = "no",
+                           `3` = "unable to do activity",
+                           `7` = "refused",
+                           `9` = "dont know"),
+         pad320 = as.factor(pad320),
+         moderate = recode(pad320,
+                           `1` = "yes",
+                           `2` = "no",
+                           `3` = "unable to do activity",
+                           `7` = "refused",
+                           `9` = "dont know"),
+         paq180 = as.factor(paq180),
+         avg_pa_per_day = recode(paq180, 
+                                 `1` = "{you sit/he/she sits} during the day and {do/does} not walk about very much",
+                                 `2` = "{you stand or walk/he/she stands or walks} about a lot during the day, but {do/does}not have to carry or lift things very often",
+                                 `3` = "{you/he/she} lift(s) light load or {have/has} to climb stairs or hills often",
+                                 `4` = "{you/he/she} {do/does} heavy work or {carry/carries} heavy loads",
+                                 `7` = "refused",
+                                 `9` = "dont know")) %>% 
+  select(seqn, moderate, vigorous, avg_pa_per_day)
+
+indiv_phys_act_01_02 = read.xport("./2001-2002/PAQIAF_B.XPT") %>% 
+  janitor::clean_names()
+
+
+
+p_drug_info_01_02 = read.xport("./2001-2002/RXQ_DRUG_B.XPT") %>%
+   janitor::clean_names() %>% 
+  filter(rxddrgid == "h00006", 
+         rxddrgid == "d00088",
+         rxddrgid == "d04272",
+         rxddrgid == "d05399",
+         rxddrgid == "d00089",
+         rxddrgid == "d01241",
+         rxddrgid == "d05973",
+         rxddrgid == "d00011",
+         rxddrgid == "d03211",
+         rxddrgid == "d03211",
+         rxddrgid == "d04287",
+         rxddrgid == "d04890",
+         rxddrgid == "d04288",
+         rxddrgid == "d04859",
+         rxddrgid == "d04109",
+         rxddrgid == "d04707",
+         rxddrgid == "d00113",
+         rxddrgid == "d04500",
+         rxddrgid == "d04860",
+         rxddrgid == "d00114",
+         rxddrgid == "d03977",
+         rxddrgid == "d04265",
+         rxddrgid == "d04061",
+         rxddrgid == "d00041",
+         rxddrgid == "d03738")
+
+
+prescrip_drug_01_02 = read.xport("./2001-2002/RXQ_RX_B.XPT") %>% 
+   janitor::clean_names()
+
+
+adult_smoke_01_02 = read.xport("./2001-2002/SMQ_B.XPT") %>%
+   janitor::clean_names() %>% 
+  mutate(smq040 = as.factor(smq040),
+         current_smoke = recode(smq040,
+                                `1` = "every day",
+                                `2` = "some days, or",
+                                `3` = "not at all?",
+                                `7` = "refused",
+                                `9` = "dont know")) %>% 
+  select(seqn, current_smoke)
+
+
+hh_smoke_01_02 = read.xport("./2001-2002/SMQFAM_B.XPT") %>% janitor::clean_names() %>% 
+  mutate(smd410 = as.factor(smd410),
+         home_smoke = recode(smd410,
+                             `1` = "Yes",
+                             `2` = "no",
+                             `7` = "Refused",
+                             `9` = "dont know")) %>% 
+  select(seqn, home_smoke)
+
+diet_interview_01_02 = read.xport("./2001-2002/DRXIFF_B.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate() %>% 
+  select(drxiprot, drxisugr, drxitfat, drxisfat, drximfat, drxipfat, drxichol)
+  
+med_condit_01_02 = read.xport("./2001-2002/MCQ_B.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    mcq160c = as.factor(mcq160c),
+    chd = recode(mcq160c, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160e = as.factor(mcq160e),
+    heart_attack = recode(mcq160e, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160f = as.factor(mcq160f),
+    stroke = recode(mcq160f, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcd160m = as.factor(mcd160m),
+    thyroid_prob = recode(mcd160m, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160l = as.factor(mcq160l),
+    liver_cond = recode(mcq160l, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq220 = as.factor(mcq220),
+    ever_cancer = recode(mcq220, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know")
+  ) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+
+bp_chol_01_02 = read.xport("./2001-2002/BPQ_B.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(bpq020 = as.factor(bpq020),
+         hbp = recode(bpq020,
+                      `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know"),
+         bpq080 = as.factor(bpq080),
+         h_chol = recode(bpq080, 
+                         `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know")) %>% 
+  select(seqn, hbp, h_chol)
+```
+
+```{r load.2003.2004}
+demo_03_04 = read.xport("./2003-2004/DEMO_C.XPT") %>% 
+  janitor::clean_names()%>% 
+  mutate(riagendr = as.factor(riagendr),
+    gender = recode(riagendr,
+         `1` = "Male",
+         `2` = "Female"), 
+    ridreth1 = as.factor(ridreth1),
+    race = recode(ridreth1,
+                  `1` = "Mexican American",
+                  `2` = "Other Hispanic",
+                  `3` = "Non_Hispanic White",
+                  `4` = "Non-Hispanic Black",
+                  `5` = "Other Race- Including")) %>% 
+select(seqn, gender, race)
+
+
+alc_03_04 = read.xport("./2003-2004/ALQ_C.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(alq120q = as.factor(alq120q),
+           p12_mo = recode(alq120q,
+                          `777` = "Refused",
+                          `999` = "Dont Know"),
+         alq120u = as.factor(alq120u),
+         daysdrnk_per_wmoyr = recode(alq120u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq130 = as.factor(alq130),
+         avg_dk_day_pstyr = recode(alq130,
+                                   `77` = "refused",
+                                   `99` = "don't know"),
+         alq140q = as.factor(alq140q),##days have 5 or more drinks/past 12 mos
+         heavy_drink = recode(alq140q,
+                                    `777` = "refused",
+                                       
+                                    `999` = "dont know"),
+         alq140u = as.factor(alq140u),
+         days_per_wmoyr = recode(alq140u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq150 = as.factor(alq150), #Ever have 5 or more drinks every day?
+         heavy_daily = recode(alq150,
+                        `1` = "yes",
+                        `2` = "no",
+                        `7` = "refused",
+                        `9` = "dont know")) %>% 
+  select(seqn, p12_mo, daysdrnk_per_wmoyr, avg_dk_day_pstyr, heavy_drink, days_per_wmoyr, heavy_daily)
+
+diabetes_03_04 = read.xport("./2003-2004/DIQ_C.XPT") %>% 
+  janitor::clean_names()  %>% 
+  mutate(diq010 = as.factor(diq010),
+    diabetes = recode(diq010, 
+                           `1` = "Yes",
+                           `2` = "No",
+                           `3` = "Borderline",
+                           `7` = "Refused",
+                           `9` = "Dont Know"))%>% 
+  select(seqn, diabetes)
+
+
+diet_03_04 = read.xport("./2003-2004/DBQ_C.XPT") %>% 
+  janitor::clean_names() 
+
+immunization_03_04 = read.xport("./2003-2004/IMQ_C.XPT") %>% 
+  janitor::clean_names() %>% 
+ mutate(
+     imd010 = as.factor(imd010),
+      hepA_vacc = recode(imd010,
+                        `1` = "Yes, at least 2 doses",
+                        `2` = "less than 2 doses",
+                        `3` = "no doses",
+                        `7` = "refused",
+                        `9` = "dont know"),
+    imq020 = as.factor(imq020),
+    hepB_vacc = recode(imq020,
+                       `1` = "Yes all 3 doses",
+                       `2` = "less than 3 doses",
+                       `3` = "No doses",
+                       `7` = "Refused",
+                       `9` = "don't know")) %>% 
+  select(seqn, hepA_vacc, hepB_vacc)
+
+phys_act_03_04 = read.xport("./2003-2004/PAQ_C.XPT") %>% 
+  janitor::clean_names()
+
+
+p_drug_info_03_04 = read.xport("./2003-2004/RXQ_DRUG_C.XPT") %>% 
+   janitor::clean_names() %>% 
+   filter(rxddrgid == "h00006", 
+         rxddrgid == "d00088",
+         rxddrgid == "d04272",
+         rxddrgid == "d05399",
+         rxddrgid == "d00089",
+         rxddrgid == "d01241",
+         rxddrgid == "d05973",
+         rxddrgid == "d00011",
+         rxddrgid == "d03211",
+         rxddrgid == "d03211",
+         rxddrgid == "d04287",
+         rxddrgid == "d04890",
+         rxddrgid == "d04288",
+         rxddrgid == "d04859",
+         rxddrgid == "d04109",
+         rxddrgid == "d04707",
+         rxddrgid == "d00113",
+         rxddrgid == "d04500",
+         rxddrgid == "d04860",
+         rxddrgid == "d00114",
+         rxddrgid == "d03977",
+         rxddrgid == "d04265",
+         rxddrgid == "d04061",
+         rxddrgid == "d00041",
+         rxddrgid == "d03738")
+
+
+prescrip_drug_03_04 = read.xport("./2003-2004/RXQ_RX_C.XPT") %>% 
+   janitor::clean_names()
+
+adult_smoke_03_04 = read.xport("./2003-2004/SMQ_c.XPT") %>% 
+   janitor::clean_names() %>% 
+   mutate(smq040 = as.factor(smq040),
+         current_smoke = recode(smq040,
+                                `1` = "every day",
+                                `2` = "some days, or",
+                                `3` = "not at all?",
+                                `7` = "refused",
+                                `9` = "dont know")) %>% 
+  select(seqn, current_smoke)
+
+youth_smoke_03_04 = read.xport("./2003-2004/SMQMEC_C.XPT") %>% 
+   janitor::clean_names()
+
+hh_smoke_03_04 = read.xport("./2003-2004/SMQFAM_C.XPT") %>% 
+  janitor::clean_names() %>% 
+    mutate(smd410 = as.factor(smd410),
+         home_smoke = recode(smd410,
+                             `1` = "Yes",
+                             `2` = "no",
+                             `7` = "Refused",
+                             `9` = "dont know")) %>% 
+  select(seqn, home_smoke)
+
+
+med_condit_03_04 = read.xport("./2003-2004/MCQ_C.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    mcq160c = as.factor(mcq160c),
+    chd = recode(mcq160c, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160e = as.factor(mcq160e),
+    heart_attack = recode(mcq160e, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160f = as.factor(mcq160f),
+    stroke = recode(mcq160f, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160m = as.factor(mcq160m),
+    thyroid_prob = recode(mcq160m, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160l = as.factor(mcq160l),
+    liver_cond = recode(mcq160l, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq220 = as.factor(mcq220),
+    ever_cancer = recode(mcq220, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know")
+  ) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+
+bp_chol_03_04 = read.xport("./2003-2004/BPQ_C.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(bpq020 = as.factor(bpq020),
+         hbp = recode(bpq020,
+                      `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know"),
+         bpq080 = as.factor(bpq080),
+         h_chol = recode(bpq080, 
+                         `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know")) %>% 
+  select(seqn, hbp, h_chol)
+
+```
+
+```{r load.2005-2006}
+demo_05_06 = read.xport("./2005-2006/DEMO_D.XPT") %>% 
+  janitor::clean_names()%>% 
+  mutate(riagendr = as.factor(riagendr),
+    gender = recode(riagendr,
+         `1` = "Male",
+         `2` = "Female"), 
+    ridreth1 = as.factor(ridreth1),
+    race = recode(ridreth1,
+                  `1` = "Mexican American",
+                  `2` = "Other Hispanic",
+                  `3` = "Non_Hispanic White",
+                  `4` = "Non-Hispanic Black",
+                  `5` = "Other Race- Including")) %>% 
+  select(seqn, gender, race)
+demo_05_06
+
+alc_05_06 = read.xport("./2005-2006/ALQ_D.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(alq120q = as.factor(alq120q),
+           p12_mo = recode(alq120q,
+                          `777` = "Refused",
+                          `999` = "Dont Know"),
+         alq120u = as.factor(alq120u),
+         daysdrnk_per_wmoyr = recode(alq120u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq130 = as.factor(alq130),
+         avg_dk_day_pstyr = recode(alq130,
+                                   `77` = "refused",
+                                   `99` = "don't know"),
+         alq140q = as.factor(alq140q),##days have 5 or more drinks/past 12 mos
+         heavy_drink = recode(alq140q,
+                                    `777` = "refused",
+                                       
+                                    `999` = "dont know"),
+         alq140u = as.factor(alq140u),
+         days_per_wmoyr = recode(alq140u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq150 = as.factor(alq150), #Ever have 5 or more drinks every day?
+         heavy_daily = recode(alq150,
+                        `1` = "yes",
+                        `2` = "no",
+                        `7` = "refused",
+                        `9` = "dont know")) %>% 
+  select(seqn, p12_mo, daysdrnk_per_wmoyr, avg_dk_day_pstyr, heavy_drink, days_per_wmoyr, heavy_daily)
+
+diabetes_05_06 = read.xport("./2005-2006/DIQ_D.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(diq010 = as.factor(diq010),
+    diabetes = recode(diq010, 
+                           `1` = "Yes",
+                           `2` = "No",
+                           `3` = "Borderline",
+                           `7` = "Refused",
+                           `9` = "Dont Know"))%>% 
+  select(seqn, diabetes)
+diabetes_05_06
+
+diet_05_06 = read.xport("./2005-2006/DBQ_D.XPT") %>% 
+  janitor::clean_names() 
+
+immunization_05_06 = read.xport("./2005-2006/IMQ_D.XPT") %>% 
+  janitor::clean_names() %>% 
+   mutate(
+     imq011 = as.factor(imq011),
+      hepA_vacc = recode(imq011,
+                        `1` = "Yes, at least 2 doses",
+                        `2` = "less than 2 doses",
+                        `3` = "no doses",
+                        `7` = "refused",
+                        `9` = "dont know"),
+    imq020 = as.factor(imq020),
+    hepB_vacc = recode(imq020,
+                       `1` = "Yes all 3 doses",
+                       `2` = "less than 3 doses",
+                       `3` = "No doses",
+                       `7` = "Refused",
+                       `9` = "don't know")) %>% 
+  select(seqn, hepA_vacc, hepB_vacc)
+
+bp_chol_05_06 = read.xport("./2005-2006/BPQ_D.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(bpq020 = as.factor(bpq020),
+         hbp = recode(bpq020,
+                      `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know"),
+         bpq080 = as.factor(bpq080),
+         h_chol = recode(bpq080, 
+                         `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know")) %>% 
+  select(seqn, hbp, h_chol)
+
+phys_act_05_06 = read.xport("./2005-2006/PAQ_D.XPT") %>% 
+  janitor::clean_names()
+
+p_drug_info_05_06 = read.xport("./2005-2006/RXQ_DRUG_D.XPT") %>% 
+   janitor::clean_names() %>% 
+   filter(rxddrgid == "h00006", 
+         rxddrgid == "d00088",
+         rxddrgid == "d04272",
+         rxddrgid == "d05399",
+         rxddrgid == "d00089",
+         rxddrgid == "d01241",
+         rxddrgid == "d05973",
+         rxddrgid == "d00011",
+         rxddrgid == "d03211",
+         rxddrgid == "d03211",
+         rxddrgid == "d04287",
+         rxddrgid == "d04890",
+         rxddrgid == "d04288",
+         rxddrgid == "d04859",
+         rxddrgid == "d04109",
+         rxddrgid == "d04707",
+         rxddrgid == "d00113",
+         rxddrgid == "d04500",
+         rxddrgid == "d04860",
+         rxddrgid == "d00114",
+         rxddrgid == "d03977",
+         rxddrgid == "d04265",
+         rxddrgid == "d04061",
+         rxddrgid == "d00041",
+         rxddrgid == "d03738")
+
+
+prescrip_drug_05_06 = read.xport("./2005-2006/RXQ_RX_D.XPT") %>% 
+   janitor::clean_names()
+
+cig_use_05_06 = read.xport("./2005-2006/SMQ_D.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate(smq040 = as.factor(smq040),
+         current_smoke = recode(smq040,
+                            `1` = "Every day",
+                            `2` = "some days",
+                            `3` = "not at all",
+                            `7` = "refused",
+                            `9` = "dont know")) %>% 
+  select(seqn, current_smoke)
+
+hh_smoke_05_06 = read.xport("./2005-2006/SMQFAM_D.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate(smd410 = as.factor(smd410),
+         home_smoke = recode(smd410,
+                             `1` = "Yes",
+                             `2` = "no",
+                             `7` = "Refused",
+                             `9` = "dont know")) %>% 
+  select(seqn, home_smoke)   
+  
+recent_tobacco_use_05_06 = read.xport("./2005-2006/SMQRTU_D.XPT") %>% 
+   janitor::clean_names() %>% 
+ # mutate(smq720 = as.factor(smq720),
+ #   daily_cig_ct = recode(smq720,
+                         # ))
+  select(seqn, smq720)
+
+med_condit_05_06 = read.xport("./2005-2006/MCQ_D.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    mcq160c = as.factor(mcq160c),
+    chd = recode(mcq160c, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160e = as.factor(mcq160e),
+    heart_attack = recode(mcq160e, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160f = as.factor(mcq160f),
+    stroke = recode(mcq160f, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160m = as.factor(mcq160m),
+    thyroid_prob = recode(mcq160m, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160l = as.factor(mcq160l),
+    liver_cond = recode(mcq160l, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq220 = as.factor(mcq220),
+    ever_cancer = recode(mcq220, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know")
+  ) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+
+```
+
+
+```{r load.07.08 }
+demo_07_08 = read.xport("./2007-2008/DEMO_E.XPT") %>%
+  janitor::clean_names()%>% 
+  mutate(riagendr = as.factor(riagendr),
+    gender = recode(riagendr,
+         `1` = "Male",
+         `2` = "Female"), 
+    ridreth1 = as.factor(ridreth1),
+    race = recode(ridreth1,
+                  `1` = "Mexican American",
+                  `2` = "Other Hispanic",
+                  `3` = "Non_Hispanic White",
+                  `4` = "Non-Hispanic Black",
+                  `5` = "Other Race- Including")) %>% 
+  select(seqn, gender, race)
+demo_07_08
+
+
+bp_chol_07_08 = read.xport("./2007-2008/BPQ_E.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(bpq020 = as.factor(bpq020),
+         hbp = recode(bpq020,
+                      `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know"),
+         bpq080 = as.factor(bpq080),
+         h_chol = recode(bpq080, 
+                         `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know")) %>% 
+  select(seqn, hbp, h_chol)
+alc_07_08 = read.xport("./2007-2008/ALQ_E.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(alq120q = as.factor(alq120q),
+           p12_mo = recode(alq120q,
+                          `777` = "Refused",
+                          `999` = "Dont Know"),
+         alq120u = as.factor(alq120u),
+         daysdrnk_per_wmoyr = recode(alq120u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq130 = as.factor(alq130),
+         avg_dk_day_pstyr = recode(alq130,
+                                   `77` = "refused",
+                                   `99` = "don't know"),
+         alq140q = as.factor(alq140q),##days have 5 or more drinks/past 12 mos
+         heavy_drink = recode(alq140q,
+                                    `777` = "refused",
+                                       
+                                    `999` = "dont know"),
+         alq140u = as.factor(alq140u),
+         days_per_wmoyr = recode(alq140u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq150 = as.factor(alq150), #Ever have 5 or more drinks every day?
+         heavy_daily = recode(alq150,
+                        `1` = "yes",
+                        `2` = "no",
+                        `7` = "refused",
+                        `9` = "dont know")) %>% 
+  select(seqn, p12_mo, daysdrnk_per_wmoyr, avg_dk_day_pstyr, heavy_drink, days_per_wmoyr, heavy_daily)
+
+diabetes_07_08 = read.xport("./2007-2008/DIQ_E.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(diq010 = as.factor(diq010),
+    diabetes = recode(diq010, 
+                           `1` = "Yes",
+                           `2` = "No",
+                           `3` = "Borderline",
+                           `7` = "Refused",
+                           `9` = "Dont Know"))%>% 
+  select(seqn, diabetes)
+diabetes_07_08
+
+diet_07_08 = read.xport("./2007-2008/DBQ_E.XPT") %>% 
+  janitor::clean_names() 
+
+immunization_07_08 = read.xport("./2007-2008/IMQ_E.XPT") %>% 
+  janitor::clean_names()%>% 
+   mutate(
+     imq011 = as.factor(imq011),
+      hepA_vacc = recode(imq011,
+                        `1` = "Yes, at least 2 doses",
+                        `2` = "less than 2 doses",
+                        `3` = "no doses",
+                        `7` = "refused",
+                        `9` = "dont know"),
+    imq020 = as.factor(imq020),
+    hepB_vacc = recode(imq020,
+                       `1` = "Yes all 3 doses",
+                       `2` = "less than 3 doses",
+                       `3` = "No doses",
+                       `7` = "Refused",
+                       `9` = "don't know"),
+    imq040 = as.factor(imq040),
+    fem_hpv = recode(imq040,
+                     `1` = "yes",
+                     `2` = "no",
+                     `7` = "refused",
+                     `9` = "dont know")) %>% 
+  select(seqn, hepA_vacc, hepB_vacc, fem_hpv)
+
+phys_act_07_08 = read.xport("./2007-2008/PAQ_E.XPT") %>% 
+  janitor::clean_names()
+
+
+p_drug_info_07_08 = read.xport("./2007-2008/RXQ_DRUG_E.XPT") %>% 
+   janitor::clean_names() %>% 
+   filter(rxddrgid == "h00006", 
+         rxddrgid == "d00088",
+         rxddrgid == "d04272",
+         rxddrgid == "d05399",
+         rxddrgid == "d00089",
+         rxddrgid == "d01241",
+         rxddrgid == "d05973",
+         rxddrgid == "d00011",
+         rxddrgid == "d03211",
+         rxddrgid == "d03211",
+         rxddrgid == "d04287",
+         rxddrgid == "d04890",
+         rxddrgid == "d04288",
+         rxddrgid == "d04859",
+         rxddrgid == "d04109",
+         rxddrgid == "d04707",
+         rxddrgid == "d00113",
+         rxddrgid == "d04500",
+         rxddrgid == "d04860",
+         rxddrgid == "d00114",
+         rxddrgid == "d03977",
+         rxddrgid == "d04265",
+         rxddrgid == "d04061",
+         rxddrgid == "d00041",
+         rxddrgid == "d03738")
+
+
+prescrip_drug_07_08 = read.xport("./2007-2008/RXQ_RX_E.XPT") %>% 
+   janitor::clean_names()
+
+cig_use_07_08 = read.xport("./2007-2008/SMQ_E.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate(smq040 = as.factor(smq040),
+         current_smoke = recode(smq040,
+                            `1` = "Every day",
+                            `2` = "some days",
+                            `3` = "not at all",
+                            `7` = "refused",
+                            `9` = "dont know")) %>% 
+  select(seqn, current_smoke)
+
+hh_smoke_07_08 = read.xport("./2007-2008/SMQFAM_E.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate(smd410 = as.factor(smd410),
+         home_smoke = recode(smd410,
+                             `1` = "Yes",
+                             `2` = "no",
+                             `7` = "Refused",
+                             `9` = "dont know")) %>% 
+  select(seqn, home_smoke)    
+  
+recent_tobacco_use_07_08 = read.xport("./2007-2008/SMQRTU_E.XPT") %>% 
+   janitor::clean_names() %>% 
+ # mutate(smq720 = as.factor(smq720),
+ #   daily_cig_ct = recode(smq720,
+                         # ))
+  select(seqn, smq720)
+
+med_condit_07_08 = read.xport("./2007-2008/MCQ_E.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    mcq160c = as.factor(mcq160c),
+    chd = recode(mcq160c, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160e = as.factor(mcq160e),
+    heart_attack = recode(mcq160e, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160f = as.factor(mcq160f),
+    stroke = recode(mcq160f, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160m = as.factor(mcq160m),
+    thyroid_prob = recode(mcq160m, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160l = as.factor(mcq160l),
+    liver_cond = recode(mcq160l, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq220 = as.factor(mcq220),
+    ever_cancer = recode(mcq220, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know")
+  ) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+```
+
+
+```{r load.09.10}
+demo_09_10 = read.xport("./2009-2010/DEMO_F.XPT") %>% 
+  janitor::clean_names()%>% 
+  mutate(riagendr = as.factor(riagendr),
+    gender = recode(riagendr,
+         `1` = "Male",
+         `2` = "Female"), 
+    ridreth1 = as.factor(ridreth1),
+    race = recode(ridreth1,
+                  `1` = "Mexican American",
+                  `2` = "Other Hispanic",
+                  `3` = "Non_Hispanic White",
+                  `4` = "Non-Hispanic Black",
+                  `5` = "Other Race- Including")) %>% 
+  select(seqn, gender, race)
+demo_09_10
+
+bp_chol_09_10 = read.xport("./2009-2010/BPQ_F.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(bpq020 = as.factor(bpq020),
+         hbp = recode(bpq020,
+                      `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know"),
+         bpq080 = as.factor(bpq080),
+         h_chol = recode(bpq080, 
+                         `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know")) %>% 
+  select(seqn, hbp, h_chol)
+
+alc_09_10 = read.xport("./2009-2010/ALQ_F.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(alq120q = as.factor(alq120q),
+           p12_mo = recode(alq120q,
+                          `777` = "Refused",
+                          `999` = "Dont Know"),
+         alq120u = as.factor(alq120u),
+         daysdrnk_per_wmoyr = recode(alq120u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq130 = as.factor(alq130),
+         avg_dk_day_pstyr = recode(alq130,
+                                   `77` = "refused",
+                                   `99` = "don't know"),
+         alq140q = as.factor(alq140q), ##days have 5 or more drinks/past 12 mos
+         heavy_drink = recode(alq140q,
+                                    `777` = "refused",
+                                       
+                                    `999` = "dont know"),
+         alq140u = as.factor(alq140u),
+         days_per_wmoyr = recode(alq140u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq150 = as.factor(alq150), #Ever have 5 or more drinks every day?
+         heavy_daily = recode(alq150,
+                        `1` = "yes",
+                        `2` = "no",
+                        `7` = "refused",
+                        `9` = "dont know")) %>% 
+  select(seqn, p12_mo, daysdrnk_per_wmoyr, avg_dk_day_pstyr, heavy_drink, days_per_wmoyr, heavy_daily)
+
+diabetes_09_10 = read.xport("./2009-2010/DIQ_F.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(diq010 = as.factor(diq010),
+    diabetes = recode(diq010, 
+                           `1` = "Yes",
+                           `2` = "No",
+                           `3` = "Borderline",
+                           `7` = "Refused",
+                           `9` = "Dont Know"))%>% 
+  select(seqn, diabetes)
+diabetes_09_10
+
+diet_09_10 = read.xport("./2009-2010/DBQ_F.XPT") %>% 
+  janitor::clean_names() 
+
+immunization_09_10 = read.xport("./2009-2010/IMQ_F.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+     imq011 = as.factor(imq011),
+      hepA_vacc = recode(imq011,
+                        `1` = "Yes, at least 2 doses",
+                        `2` = "less than 2 doses",
+                        `3` = "no doses",
+                        `7` = "refused",
+                        `9` = "dont know"),
+    imq020 = as.factor(imq020),
+    hepB_vacc = recode(imq020,
+                       `1` = "Yes all 3 doses",
+                       `2` = "less than 3 doses",
+                       `3` = "No doses",
+                       `7` = "Refused",
+                       `9` = "don't know"),
+    imq040 = as.factor(imq040),
+    fem_hpv = recode(imq040,
+                     `1` = "yes",
+                     `2` = "no",
+                     `7` = "refused",
+                     `9` = "dont know")) %>% 
+  select(seqn, hepA_vacc, hepB_vacc, fem_hpv)
+
+phys_act_09_10 = read.xport("./2009-2010/PAQ_F.XPT") %>% 
+  janitor::clean_names()
+
+
+p_drug_info_09_10 = read.xport("./2009-2010/RXQ_DRUG_F.XPT") %>% 
+   janitor::clean_names() %>% 
+   filter(rxddrgid == "h00006", 
+         rxddrgid == "d00088",
+         rxddrgid == "d04272",
+         rxddrgid == "d05399",
+         rxddrgid == "d00089",
+         rxddrgid == "d01241",
+         rxddrgid == "d05973",
+         rxddrgid == "d00011",
+         rxddrgid == "d03211",
+         rxddrgid == "d03211",
+         rxddrgid == "d04287",
+         rxddrgid == "d04890",
+         rxddrgid == "d04288",
+         rxddrgid == "d04859",
+         rxddrgid == "d04109",
+         rxddrgid == "d04707",
+         rxddrgid == "d00113",
+         rxddrgid == "d04500",
+         rxddrgid == "d04860",
+         rxddrgid == "d00114",
+         rxddrgid == "d03977",
+         rxddrgid == "d04265",
+         rxddrgid == "d04061",
+         rxddrgid == "d00041",
+         rxddrgid == "d03738")
+
+
+prescrip_drug_09_10 = read.xport("./2009-2010/RXQ_RX_F.XPT") %>% 
+   janitor::clean_names()
+
+cig_use_09_10 = read.xport("./2009-2010/SMQ_F.XPT") %>% 
+   janitor::clean_names() %>% 
+ mutate(smq040 = as.factor(smq040),
+         current_smoke = recode(smq040,
+                            `1` = "Every day",
+                            `2` = "some days",
+                            `3` = "not at all",
+                            `7` = "refused",
+                            `9` = "dont know")) %>% 
+  select(seqn, current_smoke)
+
+hh_smoke_09_10 = read.xport("./2009-2010/SMQFAM_F.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate(smd410 = as.factor(smd410),
+         home_smoke = recode(smd410,
+                             `1` = "Yes",
+                             `2` = "no",
+                             `7` = "Refused",
+                             `9` = "dont know")) %>% 
+  select(seqn, home_smoke)  
+  
+recent_tobacco_use_09_10 = read.xport("./2009-2010/SMQRTU_F.XPT") %>% 
+   janitor::clean_names() %>% 
+ # mutate(smq720 = as.factor(smq720),
+ #   daily_cig_ct = recode(smq720,
+                         # ))
+  select(smq720)
+
+diet_q_09_10 = read.xport("./2009-2010/DTQ_F.XPT") %>% 
+  janitor::clean_names() %>% 
+  select(seqn, dtd170q, dtq170u, dtd180q, dtq180u)
+
+med_condit_09_10 = read.xport("./2009-2010/MCQ_F.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    mcq160c = as.factor(mcq160c),
+    chd = recode(mcq160c, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160e = as.factor(mcq160e),
+    heart_attack = recode(mcq160e, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160f = as.factor(mcq160f),
+    stroke = recode(mcq160f, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160m = as.factor(mcq160m),
+    thyroid_prob = recode(mcq160m, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160l = as.factor(mcq160l),
+    liver_cond = recode(mcq160l, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq220 = as.factor(mcq220),
+    ever_cancer = recode(mcq220, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know")
+  ) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+
+```
+
+```{r load.11.12}
+demo_11_12 = read.xport("./2011-2012/DEMO_G.XPT") %>% 
+  janitor::clean_names()%>% 
+  mutate(riagendr = as.factor(riagendr),
+    gender = recode(riagendr,
+         `1` = "Male",
+         `2` = "Female"), 
+    ridreth1 = as.factor(ridreth1),
+    race = recode(ridreth1,
+                  `1` = "Mexican American",
+                  `2` = "Other Hispanic",
+                  `3` = "Non_Hispanic White",
+                  `4` = "Non-Hispanic Black",
+                  `5` = "Other Race- Including")) %>% 
+  select(seqn, gender, race)
+demo_11_12
+
+alc_11_12 = read.xport("./2011-2012/ALQ_G.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(alq120q = as.factor(alq120q),
+           p12_mo = recode(alq120q,
+                          `777` = "Refused",
+                          `999` = "Dont Know"),
+         alq120u = as.factor(alq120u),
+         daysdrnk_per_wmoyr = recode(alq120u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq130 = as.factor(alq130),
+         avg_dk_day_pstyr = recode(alq130,
+                                   `77` = "refused",
+                                   `99` = "don't know"),
+         alq141q = as.factor(alq141q), ## days have 4/5 drinks - past 12 mos
+         binge_drink = recode(alq141q, 
+                                    `777` = "refused",
+                                       
+                                    `999` = "dont know"),
+         alq141u = as.factor(alq141u),
+         days_per_wmoyr = recode(alq141u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq151 = as.factor(alq151), #Ever have 4/5 or more drinks every day?
+         heavy = recode(alq151,
+                        `1` = "yes",
+                        `2` = "no",
+                        `7` = "refused",
+                        `9` = "dont know")) %>% 
+  select(seqn, p12_mo, daysdrnk_per_wmoyr, avg_dk_day_pstyr, binge_drink, days_per_wmoyr, heavy)
+
+diabetes_11_12 = read.xport("./2011-2012/DIQ_G.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(diq010 = as.factor(diq010),
+    diabetes = recode(diq010, 
+                           `1` = "Yes",
+                           `2` = "No",
+                           `3` = "Borderline",
+                           `7` = "Refused",
+                           `9` = "Dont Know"))%>% 
+  select(seqn, diabetes)
+diabetes_11_12
+
+bp_chol_11_12 = read.xport("./2011-2012/BPQ_G.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(bpq020 = as.factor(bpq020),
+         hbp = recode(bpq020,
+                      `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know"),
+         bpq080 = as.factor(bpq080),
+         h_chol = recode(bpq080, 
+                         `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know")) %>% 
+  select(seqn, hbp, h_chol)
+
+diet_11_12 = read.xport("./2011-2012/DBQ_G.XPT") %>% 
+  janitor::clean_names() 
+
+immunization_11_12 = read.xport("./2011-2012/IMQ_G.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+     imq011 = as.factor(imq011),
+      hepA_vacc = recode(imq011,
+                        `1` = "Yes, at least 2 doses",
+                        `2` = "less than 2 doses",
+                        `3` = "no doses",
+                        `7` = "refused",
+                        `9` = "dont know"),
+    imq020 = as.factor(imq020),
+    hepB_vacc = recode(imq020,
+                       `1` = "Yes all 3 doses",
+                       `2` = "less than 3 doses",
+                       `3` = "No doses",
+                       `7` = "Refused",
+                       `9` = "don't know"),
+    imq040 = as.factor(imq040),
+    fem_hpv = recode(imq040,
+                     `1` = "yes",
+                     `2` = "no",
+                     `7` = "refused",
+                     `9` = "dont know"),
+    imq070 = as.factor(imq070),
+    male_hpv = recode(imq040,
+                     `1` = "yes",
+                     `2` = "no",
+                     `7` = "refused",
+                     `9` = "dont know")) %>% 
+  select(seqn, hepA_vacc, hepB_vacc, fem_hpv, male_hpv)
+
+phys_act_11_12 = read.xport("./2011-2012/PAQ_G.XPT") %>% 
+  janitor::clean_names()
+
+
+p_drug_info_11_12 = read.xport("./2011-2012/RXQ_DRUG_G.XPT") %>% 
+   janitor::clean_names() %>% 
+   filter(rxddrgid == "h00006", 
+         rxddrgid == "d00088",
+         rxddrgid == "d04272",
+         rxddrgid == "d05399",
+         rxddrgid == "d00089",
+         rxddrgid == "d01241",
+         rxddrgid == "d05973",
+         rxddrgid == "d00011",
+         rxddrgid == "d03211",
+         rxddrgid == "d03211",
+         rxddrgid == "d04287",
+         rxddrgid == "d04890",
+         rxddrgid == "d04288",
+         rxddrgid == "d04859",
+         rxddrgid == "d04109",
+         rxddrgid == "d04707",
+         rxddrgid == "d00113",
+         rxddrgid == "d04500",
+         rxddrgid == "d04860",
+         rxddrgid == "d00114",
+         rxddrgid == "d03977",
+         rxddrgid == "d04265",
+         rxddrgid == "d04061",
+         rxddrgid == "d00041",
+         rxddrgid == "d03738")
+
+
+prescrip_drug_11_12 = read.xport("./2011-2012/RXQ_RX_G.XPT") %>% 
+   janitor::clean_names()
+
+cig_use_11_12 = read.xport("./2011-2012/SMQ_G.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate(smq040 = as.factor(smq040),
+         current_smoke = recode(smq040,
+                            `1` = "Every day",
+                            `2` = "some days",
+                            `3` = "not at all",
+                            `7` = "refused",
+                            `9` = "dont know")) %>% 
+  select(seqn, current_smoke)
+
+hh_smoke_11_12 = read.xport("./2011-2012/SMQFAM_G.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate(smd410 = as.factor(smd410),
+         home_smoke = recode(smd410,
+                             `1` = "Yes",
+                             `2` = "no",
+                             `7` = "Refused",
+                             `9` = "dont know")) %>% 
+  select(seqn, home_smoke)   
+
+recent_tobacco_use_11_12 = read.xport("./2011-2012/SMQRTU_G.XPT") %>% 
+   janitor::clean_names() %>% 
+ # mutate(smq720 = as.factor(smq720),
+ #   daily_cig_ct = recode(smq720,
+                         # ))
+  select(seqn, smq720)
+
+med_condit_11_12 = read.xport("./2011-2012/MCQ_G.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    mcq160c = as.factor(mcq160c),
+    chd = recode(mcq160c, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160e = as.factor(mcq160e),
+    heart_attack = recode(mcq160e, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160f = as.factor(mcq160f),
+    stroke = recode(mcq160f, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160m = as.factor(mcq160m),
+    thyroid_prob = recode(mcq160m, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160l = as.factor(mcq160l),
+    liver_cond = recode(mcq160l, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq220 = as.factor(mcq220),
+    ever_cancer = recode(mcq220, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know")
+  ) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+```
+
+```{r load.13.14}
+demo_13_14 = read.xport("./2013-2014/DEMO_H.XPT") %>% 
+  janitor::clean_names()%>% 
+  mutate(riagendr = as.factor(riagendr),
+    gender = recode(riagendr,
+         `1` = "Male",
+         `2` = "Female"), 
+    ridreth1 = as.factor(ridreth1),
+    race = recode(ridreth1,
+                  `1` = "Mexican American",
+                  `2` = "Other Hispanic",
+                  `3` = "Non_Hispanic White",
+                  `4` = "Non-Hispanic Black",
+                  `5` = "Other Race- Including")) %>% 
+  select(seqn, gender, race)
+demo_13_14
+
+alc_13_14 = read.xport("./2013-2014/ALQ_H.XPT") %>% 
+  janitor::clean_names() %>% 
+   mutate(alq120q = as.factor(alq120q),
+           p12_mo = recode(alq120q,
+                          `777` = "Refused",
+                          `999` = "Dont Know"),
+         alq120u = as.factor(alq120u),
+         daysdrnk_per_wmoyr = recode(alq120u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq130 = as.factor(alq130),
+         avg_dk_day_pstyr = recode(alq130,
+                                   `77` = "refused",
+                                   `99` = "don't know"),
+         alq141q = as.factor(alq141q), ## days have 4/5 drinks - past 12 mos
+         binge_drink = recode(alq141q, 
+                                    `777` = "refused",
+                                       
+                                    `999` = "dont know"),
+         alq141u = as.factor(alq141u),
+         days_per_wmoyr = recode(alq141u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq151 = as.factor(alq151), #Ever have 4/5 or more drinks every day?
+         heavy = recode(alq151,
+                        `1` = "yes",
+                        `2` = "no",
+                        `7` = "refused",
+                        `9` = "dont know")) %>% 
+  select(seqn, p12_mo, daysdrnk_per_wmoyr, avg_dk_day_pstyr, binge_drink, days_per_wmoyr, heavy)
+
+diabetes_13_14 = read.xport("./2013-2014/DIQ_H.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(diq010 = as.factor(diq010),
+    diabetes = recode(diq010, 
+                           `1` = "Yes",
+                           `2` = "No",
+                           `3` = "Borderline",
+                           `7` = "Refused",
+                           `9` = "Dont Know"))%>% 
+  select(seqn, diabetes)
+diabetes_13_14
+
+diet_13_14 = read.xport("./2013-2014/DBQ_H.XPT") %>% 
+  janitor::clean_names() 
+
+immunization_13_14 = read.xport("./2013-2014/IMQ_H.XPT") %>% 
+  janitor::clean_names() %>% 
+   mutate(
+     imq011 = as.factor(imq011),
+      hepA_vacc = recode(imq011,
+                        `1` = "Yes, at least 2 doses",
+                        `2` = "less than 2 doses",
+                        `3` = "no doses",
+                        `7` = "refused",
+                        `9` = "dont know"),
+    imq020 = as.factor(imq020),
+    hepB_vacc = recode(imq020,
+                       `1` = "Yes all 3 doses",
+                       `2` = "less than 3 doses",
+                       `3` = "No doses",
+                       `7` = "Refused",
+                       `9` = "don't know"),
+    imq040 = as.factor(imq040),
+    fem_hpv = recode(imq040,
+                     `1` = "yes",
+                     `2` = "no",
+                     `7` = "refused",
+                     `9` = "dont know"),
+    imq070 = as.factor(imq070),
+    male_hpv = recode(imq040,
+                     `1` = "yes",
+                     `2` = "no",
+                     `7` = "refused",
+                     `9` = "dont know")) %>% 
+  select(seqn, hepA_vacc, hepB_vacc, fem_hpv, male_hpv)
+
+phys_act_13_14 = read.xport("./2013-2014/PAQ_H.XPT") %>% 
+  janitor::clean_names()
+
+
+p_drug_info_13_14 = read.xport("./2013-2014/RXQ_DRUG_H.XPT") %>% 
+   janitor::clean_names() %>% 
+   filter(rxddrgid == "h00006", 
+         rxddrgid == "d00088",
+         rxddrgid == "d04272",
+         rxddrgid == "d05399",
+         rxddrgid == "d00089",
+         rxddrgid == "d01241",
+         rxddrgid == "d05973",
+         rxddrgid == "d00011",
+         rxddrgid == "d03211",
+         rxddrgid == "d03211",
+         rxddrgid == "d04287",
+         rxddrgid == "d04890",
+         rxddrgid == "d04288",
+         rxddrgid == "d04859",
+         rxddrgid == "d04109",
+         rxddrgid == "d04707",
+         rxddrgid == "d00113",
+         rxddrgid == "d04500",
+         rxddrgid == "d04860",
+         rxddrgid == "d00114",
+         rxddrgid == "d03977",
+         rxddrgid == "d04265",
+         rxddrgid == "d04061",
+         rxddrgid == "d00041",
+         rxddrgid == "d03738")
+
+
+prescrip_drug_13_14 = read.xport("./2013-2014/RXQ_RX_H.XPT") %>% 
+   janitor::clean_names()
+
+cig_use_13_14 = read.xport("./2013-2014/SMQ_H.XPT") %>% 
+   janitor::clean_names() %>% 
+ mutate(smq040 = as.factor(smq040),
+         current_smoke = recode(smq040,
+                            `1` = "Every day",
+                            `2` = "some days",
+                            `3` = "not at all",
+                            `7` = "refused",
+                            `9` = "dont know")) %>% 
+  select(seqn, current_smoke)
+
+hh_smoke_13_14 = read.xport("./2013-2014/SMQFAM_H.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate(smd470 = as.factor(smd470),
+         smoke_in_home = recode(smd470, 
+                                `0` = "No one smokes inside the house",
+                                `1` = "1 household member smokes inside the house",
+                                `2` = "2 household members smoke inside the house",
+                                `3` = "3 or more household members smoke inside the house",
+                               `777` = "refused",
+                               `999` = "dont know"))  
+  
+recent_tobacco_use_13_14 = read.xport("./2013-2014/SMQRTU_H.XPT") %>% 
+   janitor::clean_names() %>% 
+ # mutate(smq720 = as.factor(smq720),
+ #   daily_cig_ct = recode(smq720,
+                         # ))
+  select(seqn, smq720)
+
+med_condit_13_14 = read.xport("./2013-2014/MCQ_H.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    mcq160c = as.factor(mcq160c),
+    chd = recode(mcq160c, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160e = as.factor(mcq160e),
+    heart_attack = recode(mcq160e, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160f = as.factor(mcq160f),
+    stroke = recode(mcq160f, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160m = as.factor(mcq160m),
+    thyroid_prob = recode(mcq160m, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160l = as.factor(mcq160l),
+    liver_cond = recode(mcq160l, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq220 = as.factor(mcq220),
+    ever_cancer = recode(mcq220, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know")
+  ) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+
+bp_chol_13_14 = read.xport("./2013-2014/BPQ_H.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(bpq020 = as.factor(bpq020),
+         hbp = recode(bpq020,
+                      `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know"),
+         bpq080 = as.factor(bpq080),
+         h_chol = recode(bpq080, 
+                         `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know")) %>% 
+  select(seqn, hbp, h_chol)
+```
+
+```{r load.15.16}
+demo_15_16 = read.xport("./2015-2016/DEMO_I.XPT") %>% 
+  janitor::clean_names()%>% 
+  mutate(riagendr = as.factor(riagendr),
+    gender = recode(riagendr,
+         `1` = "Male",
+         `2` = "Female"), 
+    ridreth1 = as.factor(ridreth1),
+    race = recode(ridreth1,
+                  `1` = "Mexican American",
+                  `2` = "Other Hispanic",
+                  `3` = "Non_Hispanic White",
+                  `4` = "Non-Hispanic Black",
+                  `5` = "Other Race- Including")) %>% 
+  select(seqn, gender, race)
+demo_15_16
+
+alc_15_16 = read.xport("./2015-2016/ALQ_I.XPT") %>% 
+  janitor::clean_names() %>% 
+   mutate(alq120q = as.factor(alq120q),
+           p12_mo = recode(alq120q,
+                          `777` = "Refused",
+                          `999` = "Dont Know"),
+         alq120u = as.factor(alq120u),
+         daysdrnk_per_wmoyr = recode(alq120u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq130 = as.factor(alq130),
+         avg_dk_day_pstyr = recode(alq130,
+                                   `77` = "refused",
+                                   `99` = "don't know"),
+         alq141q = as.factor(alq141q), ## days have 4/5 drinks - past 12 mos
+         binge_drink = recode(alq141q, 
+                                    `777` = "refused",
+                                       
+                                    `999` = "dont know"),
+         alq141u = as.factor(alq141u),
+         days_per_wmoyr = recode(alq141u,
+         `1` = "week",
+         `2` = "month",
+         `3` = "year",
+         `7` = "refused",
+         `9` = "dont know"),
+         alq151 = as.factor(alq151), #Ever have 4/5 or more drinks every day?
+         heavy = recode(alq151,
+                        `1` = "yes",
+                        `2` = "no",
+                        `7` = "refused",
+                        `9` = "dont know")) %>% 
+  select(seqn, p12_mo, daysdrnk_per_wmoyr, avg_dk_day_pstyr, binge_drink, days_per_wmoyr, heavy)
+
+diabetes_15_16 = read.xport("./2015-2016/DIQ_I.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(diq010 = as.factor(diq010),
+    diabetes = recode(diq010, 
+                           `1` = "Yes",
+                           `2` = "No",
+                           `3` = "Borderline",
+                           `7` = "Refused",
+                           `9` = "Dont Know"))%>% 
+  select(seqn, diabetes)
+diabetes_15_16
+
+diet_15_16 = read.xport("./2015-2016/DBQ_I.XPT") %>% 
+  janitor::clean_names() 
+
+immunization_15_16 = read.xport("./2015-2016/IMQ_I.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+     imq011 = as.factor(imq011),
+      hepA_vacc = recode(imq011,
+                        `1` = "Yes, at least 2 doses",
+                        `2` = "less than 2 doses",
+                        `3` = "no doses",
+                        `7` = "refused",
+                        `9` = "dont know"),
+    imq020 = as.factor(imq020),
+    hepB_vacc = recode(imq020,
+                       `1` = "Yes all 3 doses",
+                       `2` = "less than 3 doses",
+                       `3` = "No doses",
+                       `7` = "Refused",
+                       `9` = "don't know"),
+    imq060 = as.factor(imq060),
+    fem_hpv = recode(imq060,
+                     `1` = "yes",
+                     `2` = "no",
+                     `7` = "refused",
+                     `9` = "dont know"),
+    imq070 = as.factor(imq070),
+    male_hpv = recode(imq070,
+                     `1` = "yes",
+                     `2` = "no",
+                     `7` = "refused",
+                     `9` = "dont know")) %>% 
+  select(seqn, hepA_vacc, hepB_vacc, fem_hpv, male_hpv)
+
+phys_act_15_16 = read.xport("./2015-2016/PAQ_I.XPT") %>% 
+  janitor::clean_names()
+
+
+ prescrip_drug_15_16 = read.xport("./2015-2016/RXQ_RX_I.XPT") %>% 
+   janitor::clean_names()
+ 
+p_drug_info_15_16 = read.xport("./2015-2016/RXQ_DRUG_I.XPT") %>% 
+   janitor::clean_names() %>% 
+   filter(rxddrgid == "h00006", 
+         rxddrgid == "d00088",
+         rxddrgid == "d04272",
+         rxddrgid == "d05399",
+         rxddrgid == "d00089",
+         rxddrgid == "d01241",
+         rxddrgid == "d05973",
+         rxddrgid == "d00011",
+         rxddrgid == "d03211",
+         rxddrgid == "d03211",
+         rxddrgid == "d04287",
+         rxddrgid == "d04890",
+         rxddrgid == "d04288",
+         rxddrgid == "d04859",
+         rxddrgid == "d04109",
+         rxddrgid == "d04707",
+         rxddrgid == "d00113",
+         rxddrgid == "d04500",
+         rxddrgid == "d04860",
+         rxddrgid == "d00114",
+         rxddrgid == "d03977",
+         rxddrgid == "d04265",
+         rxddrgid == "d04061",
+         rxddrgid == "d00041",
+         rxddrgid == "d03738")
+
+
+cig_use_15_16 = read.xport("./2015-2016/SMQ_I.XPT") %>% 
+   janitor::clean_names() %>% 
+ mutate(smq040 = as.factor(smq040),
+         current_smoke = recode(smq040,
+                            `1` = "Every day",
+                            `2` = "some days",
+                            `3` = "not at all",
+                            `7` = "refused",
+                            `9` = "dont know")) %>% 
+  select(seqn, current_smoke)
+
+hh_smoke_15_16 = read.xport("./2015-2016/SMQFAM_I.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate(smd470 = as.factor(smd470),
+         smoke_in_home = recode(smd470, 
+                                `0` = "No one smokes inside the house",
+                                `1` = "1 household member smokes inside the house",
+                                `2` = "2 household members smoke inside the house",
+                                `3` = "3 or more household members smoke inside the house",
+                               `777` = "refused",
+                               `999` = "dont know"))
+  
+recent_tobacco_use_15_16 = read.xport("./2015-2016/SMQRTU_I.XPT") %>% 
+   janitor::clean_names() %>% 
+ # mutate(smq720 = as.factor(smq720),
+ #   daily_cig_ct = recode(smq720,
+                         # ))
+  select(seqn, smq720)
+
+bp_chol_15_16 = read.xport("./2015-2016/BPQ_I.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(bpq020 = as.factor(bpq020),
+         hbp = recode(bpq020,
+                      `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know"),
+         bpq080 = as.factor(bpq080),
+         h_chol = recode(bpq080, 
+                         `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know")) %>% 
+  select(seqn, hbp, h_chol)
+
+med_condit_15_16 = read.xport("./2015-2016/MCQ_I.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    mcq160c = as.factor(mcq160c),
+    chd = recode(mcq160c, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160e = as.factor(mcq160e),
+    heart_attack = recode(mcq160e, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160f = as.factor(mcq160f),
+    stroke = recode(mcq160f, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160m = as.factor(mcq160m),
+    thyroid_prob = recode(mcq160m, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq160l = as.factor(mcq160l),
+    liver_cond = recode(mcq160l, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know"),
+    mcq220 = as.factor(mcq220),
+    ever_cancer = recode(mcq220, 
+                  `1` = "yes",
+                  `2` = "no",
+                  `7` = "refused",
+                  `9` = "dont know")
+  ) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond, ever_cancer )
+```
+
+```{r load.17.18}
+demo_17_18 = read.xport("./2017-2018/DEMO_J.XPT") %>% 
+  janitor::clean_names()%>% 
+  mutate(riagendr = as.factor(riagendr),
+    gender = recode(riagendr,
+         `1` = "Male",
+         `2` = "Female"), 
+    ridreth1 = as.factor(ridreth1),
+    race = recode(ridreth1,
+                  `1` = "Mexican American",
+                  `2` = "Other Hispanic",
+                  `3` = "Non_Hispanic White",
+                  `4` = "Non-Hispanic Black",
+                  `5` = "Other Race- Including")) %>% 
+  select(seqn, gender, race)
+demo_17_18
+
+
+
+diabetes_17_18 = read.xport("./2017-2018/DIQ_J.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(diq010 = as.factor(diq010),
+    diabetes = recode(diq010, 
+                           `1` = "Yes",
+                           `2` = "No",
+                           `3` = "Borderline",
+                           `7` = "Refused",
+                           `9` = "Dont Know"))%>% 
+  select(seqn, diabetes)
+diabetes_17_18
+
+diet_17_18 = read.xport("./2017-2018/DBQ_J.XPT") %>% 
+  janitor::clean_names() 
+
+immunization_17_18 = read.xport("./2017-2018/IMQ_J.XPT") %>%
+  janitor::clean_names() %>% 
+   mutate(
+     imq011 = as.factor(imq011),
+      hepA_vacc = recode(imq011,
+                        `1` = "Yes, at least 2 doses",
+                        `2` = "less than 2 doses",
+                        `3` = "no doses",
+                        `7` = "refused",
+                        `9` = "dont know"),
+    imq020 = as.factor(imq020),
+    hepB_vacc = recode(imq020,
+                       `1` = "Yes all 3 doses",
+                       `2` = "less than 3 doses",
+                       `3` = "No doses",
+                       `7` = "Refused",
+                       `9` = "don't know"),
+    imq060 = as.factor(imq060),
+    fem_hpv = recode(imq060,
+                     `1` = "yes",
+                     `2` = "no",
+                     `7` = "refused",
+                     `9` = "dont know"),
+    imq070 = as.factor(imq070),
+    male_hpv = recode(imq070,
+                     `1` = "yes",
+                     `2` = "no",
+                     `7` = "refused",
+                     `9` = "dont know")) %>% 
+  select(seqn, hepA_vacc, hepB_vacc, fem_hpv, male_hpv)
+
+phys_act_17_18 = read.xport("./2017-2018/PAQ_J.XPT") %>% 
+  janitor::clean_names()
+
+
+
+
+cig_use_17_18 = read.xport("./2017-2018/SMQ_J.XPT") %>% 
+   janitor::clean_names() %>% 
+ mutate(smq040 = as.factor(smq040),
+         current_smoke = recode(smq040,
+                            `1` = "Every day",
+                            `2` = "some days",
+                            `3` = "not at all",
+                            `7` = "refused",
+                            `9` = "dont know")) %>% 
+  select(seqn, current_smoke)
+  
+hh_smoke_17_18 = read.xport("./2017-2018/SMQFAM_J.XPT") %>% 
+   janitor::clean_names() %>% 
+  mutate(smd470 = as.factor(smd470),
+         smoke_in_home = recode(smd470, 
+                                `0` = "No one smokes inside the house",
+                                `1` = "1 household member smokes inside the house",
+                                `2` = "2 household members smoke inside the house",
+                                `3` = "3 or more household members smoke inside the house",
+                               `777` = "refused",
+                               `999` = "dont know"))
+  
+  
+recent_tobacco_use_17_18 = read.xport("./2017-2018/SMQRTU_J.XPT") %>% 
+   janitor::clean_names() %>% 
+ # mutate(smq720 = as.factor(smq720),
+ #   daily_cig_ct = recode(smq720,
+                         # ))
+  select(seqn, smq720)
+
+
+bp_chol_17_18 = read.xport("./2017-2018/BPQ_J.XPT") %>% 
+  janitor::clean_names() %>% 
+  mutate(bpq020 = as.factor(bpq020),
+         hbp = recode(bpq020,
+                      `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know"),
+         bpq080 = as.factor(bpq080),
+         h_chol = recode(bpq080, 
+                         `1` = "yes",
+                      `2` = "no",
+                      `7` = "refused",
+                      `9` = "dont know")) %>% 
+  select(seqn, hbp, h_chol)
+```
+
+
+
+
+```{r combine.datasets}
+demographics = bind_rows(demo_1999_2000, demo_01_02, demo_03_04, demo_05_06, demo_07_08, demo_09_10, demo_11_12, demo_13_14, demo_15_16, demo_17_18)
+
+alcohol = bind_rows(alc_1999_2000, alc_01_02, alc_03_04, alc_05_06, alc_07_08, alc_09_10, alc_11_12, alc_13_14, alc_15_16)
+  
+diabetes = bind_rows(diabetes_1999_2000, diabetes_01_02, diabetes_03_04, diabetes_05_06, diabetes_07_08, diabetes_09_10, diabetes_11_12, diabetes_13_14, diabetes_15_16, diabetes_17_18)
+#demo_1999_2000 issues adding this demographic file
+
+cig_use = bind_rows(adult_smoke_1999_2000, adult_smoke_01_02, adult_smoke_03_04, cig_use_05_06, cig_use_07_08, cig_use_09_10, cig_use_11_12, cig_use_13_14, cig_use_15_16, cig_use_17_18)
+
+household_smoking = bind_rows(hh_smoke_99_00, hh_smoke_01_02, hh_smoke_03_04, hh_smoke_05_06, hh_smoke_07_08, hh_smoke_09_10, hh_smoke_11_12, hh_smoke_13_14, hh_smoke_15_16, hh_smoke_17_18)
+
+prescrip_drug_info = bind_rows(p_drug_info_1999_2000, p_drug_info_01_02, p_drug_info_03_04, p_drug_info_05_06, p_drug_info_07_08, p_drug_info_09_10, p_drug_info_11_12, p_drug_info_13_14, p_drug_info_15_16)
+
+p_drug = bind_rows(prescrip_drug_1999_2000, prescrip_drug_01_02, prescrip_drug_03_04, prescrip_drug_05_06, prescrip_drug_07_08, prescrip_drug_09_10, prescrip_drug_11_12, prescrip_drug_13_14, prescrip_drug_15_16)
+
+immunization = bind_rows(immunization_1999_2000, immunization_01_02, immunization_03_04, immunization_05_06, immunization_07_08, immunization_09_10, immunization_11_12, immunization_13_14, immunization_15_16, immunization_17_18)
+
+pa = bind_rows(phys_act_1999_2000, phys_act_01_02, phys_act_03_04, phys_act_05_06, phys_act_07_08, phys_act_09_10, phys_act_11_12, phys_act_13_14, phys_act_15_16, phys_act_17_18)
+
+med_cond = bind_rows(med_condit_99_00, med_condit_01_02, med_condit_03_04, med_condit_05_06, med_condit_07_08, med_condit_09_10, med_condit_11_12, med_condit_13_14, med_condit_15_16)
+
+bp_chol = bind_rows(bp_chol_99_00, bp_chol_01_02, bp_chol_03_04, bp_chol_05_06, bp_chol_07_08, bp_chol_09_10, bp_chol_11_12, bp_chol_13_14, bp_chol_15_16, bp_chol_17_18)
+
+demo_diabetes = merge(demographics, diabetes,  by = "seqn")
+demo_immunization = merge(demo_diabetes, immunization, by = "seqn")
+demo_alc = merge(demo_immunization, alcohol, by = "seqn")
+demo_smoke = merge(demo_alc, cig_use, by = "seqn")
+demo_pa = merge(demo_smoke, pa, by = "seqn")
+#demo_prescrip = merge(demo_pa, prescrip_drug_info, by = "seqn")
+demo_hh = merge(demo_pa, household_smoking, by = "seqn")
+demo_pdrug = merge(demo_hh, p_drug, by = "seqn")
+
+demo_med = merge(demo_pdrug, med_cond, by = "seqn")
+
+demo_bp_chol = merge(demo_med, bp_chol, by = "seqn")
+```
+
