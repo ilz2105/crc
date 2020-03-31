@@ -1,0 +1,1682 @@
+/*
+ *  Survey:           NHES II
+ *  Years:            1963-1965
+ *  Questionnaire:    Integrated Data Tape
+ *  Tape Number:      2IDT
+ *
+ *  Code Created By:  CDC/IMB
+ *
+ *  DESCRIPTION:  This file is provided as a starting point to perform advanced 
+ *  statistical queries on the survey data.  They are to be used in conjunction 
+ *  with legacy codebooks or data tape documentation to analyze the data.  In order 
+ *  to use this program: either copy the tape file to your C:\temp directory, or change 
+ *  the infile to point to the location that your tape file is located.
+*/
+
+DATA D_2IDT;
+   INFILE '/home/ilz21050/crc/nhesii_integrated_data.txt';
+      LENGTH
+         SEQN 8
+         H2ID0005 $10
+         H2ID0015 4
+         H2ID0016 8
+         H2ID0021 8
+         H2ID0027 8
+         H2ID0033 4
+         H2ID0034 4
+         H2ID0035 4
+         H2ID0036 4
+         H2ID0038 4
+         H2ID0040 4
+         H2ID0042 4
+         H2ID0044 4
+         H2ID0047 $1
+         H2ID0048 4
+         H2ID0049 $1
+         H2ID0050 4
+         H2ID0051 4
+         H2ID0052 4
+         H2ID0053 4
+         H2ID0054 4
+         H2ID0055 4
+         H2ID0056 4
+         H2ID0058 4
+         H2ID0059 $1
+         H2ID0060 4
+         H2ID0061 4
+         H2ID0063 4
+         H2ID0065 4
+         H2ID0066 4
+         H2ID0067 4
+         H2ID0068 4
+         H2ID0069 4
+         H2ID0071 4
+         H2ID0073 4
+         H2ID0074 4
+         H2ID0075 4
+         H2ID0076 4
+         H2ID0077 $1
+         H2ID0078 $1
+         H2ID0079 $1
+         H2ID0080 $1
+         H2ID0081 4
+         H2ID0082 4
+         H2ID0083 4
+         H2ID0084 $2
+         H2ID0086 4
+         H2ID0087 $2
+         H2ID0089 $2
+         H2ID0091 $1
+         H2ID0092 $2
+         H2ID0094 $1
+         H2ID0095 $1
+         H2ID0096 $1
+         H2ID0097 $2
+         H2ID0099 $1
+         H2ID0100 $1
+         H2ID0101 4
+         H2ID0102 $1
+         H2ID0103 4
+         H2ID0105 4
+         H2ID0106 4
+         H2ID0108 4
+         H2ID0109 4
+         H2ID0111 4
+         H2ID0112 4
+         H2ID0114 4
+         H2ID0115 4
+         H2ID0117 4
+         H2ID0118 4
+         H2ID0119 4
+         H2ID0121 4
+         H2ID0123 4
+         H2ID0124 4
+         H2ID0125 4
+         H2ID0126 4
+         H2ID0127 4
+         H2ID0129 4
+         H2ID0131 4
+         H2ID0133 4
+         H2ID0134 4
+         H2ID0136 8
+         H2ID0140 4
+         H2ID0141 4
+         H2ID0142 4
+         H2ID0143 4
+         H2ID0144 4
+         H2ID0145 4
+         H2ID0146 4
+         H2ID0147 4
+         H2ID0148 4
+         H2ID0149 4
+         H2ID0150 4
+         H2ID0151 4
+         H2ID0152 4
+         H2ID0153 4
+         H2ID0154 4
+         H2ID0155 4
+         H2ID0156 4
+         H2ID0157 4
+         H2ID0158 4
+         H2ID0159 4
+         H2ID0160 4
+         H2ID0161 4
+         H2ID0162 4
+         H2ID0163 4
+         H2ID0164 4
+         H2ID0165 4
+         H2ID0166 4
+         H2ID0167 4
+         H2ID0168 4
+         H2ID0169 4
+         H2ID0170 4
+         H2ID0171 4
+         H2ID0172 4
+         H2ID0173 4
+         H2ID0174 4
+         H2ID0175 4
+         H2ID0176 4
+         H2ID0177 4
+         H2ID0178 4
+         H2ID0179 4
+         H2ID0180 4
+         H2ID0181 4
+         H2ID0182 4
+         H2ID0183 4
+         H2ID0184 4
+         H2ID0185 4
+         H2ID0186 4
+         H2ID0187 4
+         H2ID0188 4
+         H2ID0189 4
+         H2ID0190 4
+         H2ID0191 4
+         H2ID0192 4
+         H2ID0193 4
+         H2ID0194 4
+         H2ID0195 4
+         H2ID0196 4
+         H2ID0197 $1
+         H2ID0198 4
+         H2ID0199 4
+         H2ID0200 4
+         H2ID0201 4
+         H2ID0202 4
+         H2ID0203 4
+         H2ID0204 4
+         H2ID0205 4
+         H2ID0206 4
+         H2ID0207 4
+         H2ID0209 4
+         H2ID0210 4
+         H2ID0211 4
+         H2ID0212 4
+         H2ID0213 4
+         H2ID0215 4
+         H2ID0216 4
+         H2ID0217 4
+         H2ID0218 4
+         H2ID0219 4
+         H2ID0220 4
+         H2ID0221 4
+         H2ID0222 4
+         H2ID0223 4
+         H2ID0224 4
+         H2ID0225 4
+         H2ID0226 4
+         H2ID0227 4
+         H2ID0228 4
+         H2ID0229 4
+         H2ID0230 4
+         H2ID0231 4
+         H2ID0232 4
+         H2ID0233 4
+         H2ID0234 4
+         H2ID0235 4
+         H2ID0236 4
+         H2ID0237 4
+         H2ID0238 4
+         H2ID0239 4
+         H2ID0240 4
+         H2ID0241 4
+         H2ID0242 4
+         H2ID0243 4
+         H2ID0244 4
+         H2ID0245 4
+         H2ID0246 4
+         H2ID0247 4
+         H2ID0248 4
+         H2ID0249 4
+         H2ID0250 4
+         H2ID0251 4
+         H2ID0252 4
+         H2ID0253 4
+         H2ID0254 4
+         H2ID0255 4
+         H2ID0256 4
+         H2ID0257 4
+         H2ID0258 4
+         H2ID0259 8
+         H2ID0263 4
+         H2ID0264 4
+         H2ID0265 4
+         H2ID0266 4
+         H2ID0267 4
+         H2ID0268 4
+         H2ID0269 4
+         H2ID0270 4
+         H2ID0271 4
+         H2ID0273 4
+         H2ID0275 4
+         H2ID0276 4
+         H2ID0277 4
+         H2ID0278 4
+         H2ID0279 4
+         H2ID0280 4
+         H2ID0281 4
+         H2ID0282 4
+         H2ID0283 4
+         H2ID0284 4
+         H2ID0285 4
+         H2ID0286 4
+         H2ID0287 4
+         H2ID0288 4
+         H2ID0289 4
+         H2ID0290 $2
+         H2ID0292 4
+         H2ID0293 4
+         H2ID0294 4
+         H2ID0295 4
+         H2ID0296 4
+         H2ID0297 4
+         H2ID0298 4
+         H2ID0299 4
+         H2ID0300 $1
+         H2ID0301 $1
+         H2ID0302 $1
+         H2ID0303 $1
+         H2ID0304 $1
+         H2ID0305 $1
+         H2ID0306 $1
+         H2ID0307 4
+         H2ID0308 4
+         H2ID0309 4
+         H2ID0310 4
+         H2ID0311 4
+         H2ID0312 $1
+         H2ID0313 $1
+         H2ID0314 $1
+         H2ID0315 $1
+         H2ID0316 $1
+         H2ID0317 $1
+         H2ID0318 $1
+         H2ID0319 $1
+         H2ID0320 $1
+         H2ID0321 $1
+         H2ID0322 $1
+         H2ID0323 $1
+         H2ID0324 $1
+         H2ID0325 $1
+         H2ID0326 $1
+         H2ID0327 4
+         H2ID0328 4
+         H2ID0329 4
+         H2ID0330 4
+         H2ID0331 $1
+         H2ID0332 $1
+         H2ID0333 $1
+         H2ID0334 $1
+         H2ID0335 $1
+         H2ID0336 $1
+         H2ID0337 $1
+         H2ID0338 $1
+         H2ID0339 $1
+         H2ID0340 4
+         H2ID0341 4
+         H2ID0342 4
+         H2ID0343 4
+         H2ID0344 $1
+         H2ID0345 $1
+         H2ID0346 $1
+         H2ID0347 4
+         H2ID0349 4
+         H2ID0351 4
+         H2ID0352 4
+         H2ID0354 4
+         H2ID0356 4
+         H2ID0357 4
+         H2ID0358 4
+         H2ID0360 4
+         H2ID0361 4
+         H2ID0362 4
+         H2ID0363 $1
+         H2ID0364 4
+         H2ID0365 4
+         H2ID0367 4
+         H2ID0369 4
+         H2ID0371 4
+         H2ID0373 4
+         H2ID0375 4
+         H2ID0378 4
+         H2ID0381 4
+         H2ID0384 4
+         H2ID0387 4
+         H2ID0390 4
+         H2ID0393 4
+         H2ID0394 4
+         H2ID0396 4
+         H2ID0398 4
+         H2ID0401 4
+         H2ID0404 4
+         H2ID0407 4
+         H2ID0410 4
+         H2ID0413 8
+         H2ID0417 8
+         H2ID0421 4
+         H2ID0423 4
+         H2ID0425 4
+         H2ID0427 4
+         H2ID0430 8
+         H2ID0434 4
+         H2ID0435 4
+         H2ID0437 4
+         H2ID0438 $12
+         H2ID0450 $3
+         H2ID0453 $3
+         H2ID0456 $1
+         H2ID0457 $1
+         H2ID0458 $1
+         H2ID0459 $1
+         H2ID0460 $1
+         H2ID0461 4
+         H2ID0462 $1
+         H2ID0463 $1
+         H2ID0464 $1
+         H2ID0465 $1
+         H2ID0466 $1
+         H2ID0467 $1
+         H2ID0468 $1
+         H2ID0469 $1
+         H2ID0470 $1
+         H2ID0471 $1
+         H2ID0472 $1
+         H2ID0473 $1
+         H2ID0474 $1
+         H2ID0475 4
+         H2ID0478 4
+         H2ID0481 4
+         H2ID0484 4
+         H2ID0487 8
+         H2ID0491 8
+         H2ID0495 4
+         H2ID0497 4
+         H2ID0499 4
+         H2ID0500 $1
+         H2ID0501 $1
+         H2ID0502 $1
+         H2ID0503 $1
+         H2ID0504 $1
+         H2ID0505 $1
+         H2ID0506 $1
+         H2ID0507 $1
+         H2ID0508 $1
+         H2ID0509 $1
+         H2ID0510 $1
+         H2ID0511 $1
+         H2ID0512 $1
+         H2ID0513 $1
+         H2ID0514 $1
+         H2ID0515 $1
+         H2ID0516 $1
+         H2ID0517 $1
+         H2ID0518 $1
+         H2ID0519 $1
+         H2ID0520 $1
+         H2ID0521 $1
+         H2ID0522 $1
+         H2ID0523 $1
+         H2ID0524 $1
+         H2ID0525 $1
+         H2ID0526 $1
+         H2ID0527 $1
+         H2ID0528 $1
+         H2ID0529 $1
+         H2ID0530 $1
+         H2ID0531 $1
+         H2ID0532 $1
+         H2ID0533 $1
+         H2ID0534 $1
+         H2ID0535 $1
+         H2ID0536 $1
+         H2ID0537 $1
+         H2ID0538 $1
+         H2ID0539 $1
+         H2ID0540 $1
+         H2ID0541 $1
+         H2ID0542 $1
+         H2ID0543 $1
+         H2ID0544 $1
+         H2ID0545 $1
+         H2ID0546 $1
+         H2ID0547 $1
+         H2ID0548 $1
+         H2ID0549 $1
+         H2ID0550 $1
+         H2ID0551 $1
+         H2ID0552 $1
+         H2ID0553 $1
+         H2ID0554 $1
+         H2ID0555 $1
+         H2ID0556 $1
+         H2ID0557 $1
+         H2ID0558 $1
+         H2ID0559 $1
+         H2ID0560 $1
+         H2ID0561 $1
+         H2ID0562 $1
+         H2ID0563 4
+         H2ID0565 $1
+         H2ID0566 $1
+         H2ID0567 $1
+         H2ID0568 $1
+         H2ID0569 $4
+         H2ID0573 $1
+         H2ID0574 $36
+         H2ID0610 $1
+         H2ID0611 4
+         H2ID0612 4
+         H2ID0613 4
+         H2ID0614 $2
+         H2ID0616 $1
+         H2ID0617 $1
+         H2ID0618 4
+         H2ID0620 4
+         H2ID0621 4
+         H2ID0623 4
+         H2ID0625 4
+         H2ID0627 4
+         H2ID0629 4
+         H2ID0631 4
+         H2ID0633 4
+         H2ID0635 4
+         H2ID0637 4
+         H2ID0639 4
+         H2ID0641 4
+         H2ID0643 $1
+         H2ID0644 $2
+         H2ID0646 4
+         H2ID0647 $1
+         H2ID0648 $2
+         H2ID0650 $1
+         H2ID0651 $2
+         H2ID0653 $2
+         H2ID0655 4
+         H2ID0656 $1
+         H2ID0657 4
+         H2ID0660 $1
+         H2ID0661 $1
+         H2ID0662 $1
+         H2ID0663 $1
+         H2ID0664 $1
+         H2ID0665 $1
+         H2ID0666 $1
+         H2ID0667 $1
+         H2ID0669 $2
+         H2ID0671 $2
+         H2ID0673 $2
+         H2ID0675 $1
+         H2ID0676 $1
+         H2ID0677 $1
+         H2ID0678 $1
+         H2ID0679 $1
+         H2ID0680 $1
+         H2ID0681 $1
+         H2ID0682 $1
+         H2ID0683 $1
+         H2ID0684 4
+         H2ID0687 4
+         H2ID0690 8
+         H2ID0694 8
+         H2ID0698 8
+         H2ID0702 4
+         H2ID0705 4
+         H2ID0708 8
+         H2ID0712 4
+         H2ID0715 4
+         H2ID0718 4
+         H2ID0721 4
+         H2ID0724 4
+         H2ID0727 4
+         H2ID0730 4
+         H2ID0733 8
+         H2ID0737 4
+         H2ID0740 4
+         H2ID0743 4
+         H2ID0746 4
+         H2ID0749 4
+         H2ID0752 8
+         H2ID0756 8
+         H2ID0760 8
+         H2ID0764 4
+         H2ID0767 4
+         H2ID0770 4
+         H2ID0773 4
+         H2ID0776 4
+         H2ID0779 8
+         H2ID0783 8
+         H2ID0787 4
+         H2ID0789 4
+         H2ID0791 $2
+         H2ID0793 $2
+         H2ID0795 $1
+         H2ID0796 $1
+         H2ID0797 8
+         H2ID0801 8
+         H2ID0805 4
+         H2ID0807 4
+         H2ID0808 4
+         H2ID0811 4
+         H2ID0814 4
+         H2ID0817 4
+         H2ID0820 4
+         H2ID0823 4
+         H2ID0826 4
+         H2ID0829 4
+         H2ID0832 4
+         H2ID0835 4
+         H2ID0838 4
+         H2ID0841 4
+         H2ID0844 4
+         H2ID0847 4
+         H2ID0850 4
+         H2ID0853 4
+         H2ID0856 4
+         H2ID0859 4
+         H2ID0862 4
+         H2ID0865 4
+         H2ID0868 4
+         H2ID0871 4
+         H2ID0874 4
+         H2ID0877 4
+         H2ID0880 4
+         H2ID0883 4
+         H2ID0886 4
+         H2ID0889 4
+         H2ID0892 4
+         H2ID0895 4
+         H2ID0898 4
+         H2ID0901 4
+         H2ID0902 8
+         H2ID0907 8
+      ;
+
+      INPUT
+         SEQN 1-4
+         H2ID0005 5-14
+         H2ID0015 15
+         H2ID0016 16-20
+         H2ID0021 21-26
+         H2ID0027 27-32
+         H2ID0033 33
+         H2ID0034 34
+         H2ID0035 35
+         H2ID0036 36-37
+         H2ID0038 38-39
+         H2ID0040 40-41
+         H2ID0042 42-43
+         H2ID0044 44-46
+         H2ID0047 47
+         H2ID0048 48
+         H2ID0049 49
+         H2ID0050 50
+         H2ID0051 51
+         H2ID0052 52
+         H2ID0053 53
+         H2ID0054 54
+         H2ID0055 55
+         H2ID0056 56-57
+         H2ID0058 58
+         H2ID0059 59
+         H2ID0060 60
+         H2ID0061 61-62
+         H2ID0063 63-64
+         H2ID0065 65
+         H2ID0066 66
+         H2ID0067 67
+         H2ID0068 68
+         H2ID0069 69-70
+         H2ID0071 71-72
+         H2ID0073 73
+         H2ID0074 74
+         H2ID0075 75
+         H2ID0076 76
+         H2ID0077 77
+         H2ID0078 78
+         H2ID0079 79
+         H2ID0080 80
+         H2ID0081 81
+         H2ID0082 82
+         H2ID0083 83
+         H2ID0084 84-85
+         H2ID0086 86
+         H2ID0087 87-88
+         H2ID0089 89-90
+         H2ID0091 91
+         H2ID0092 92-93
+         H2ID0094 94
+         H2ID0095 95
+         H2ID0096 96
+         H2ID0097 97-98
+         H2ID0099 99
+         H2ID0100 100
+         H2ID0101 101
+         H2ID0102 102
+         H2ID0103 103-104
+         H2ID0105 105
+         H2ID0106 106-107
+         H2ID0108 108
+         H2ID0109 109-110
+         H2ID0111 111
+         H2ID0112 112-113
+         H2ID0114 114
+         H2ID0115 115-116
+         H2ID0117 117
+         H2ID0118 118
+         H2ID0119 119-120
+         H2ID0121 121-122
+         H2ID0123 123
+         H2ID0124 124
+         H2ID0125 125
+         H2ID0126 126
+         H2ID0127 127-128
+         H2ID0129 129-130
+         H2ID0131 131-132
+         H2ID0133 133
+         H2ID0134 134-135
+         H2ID0136 136-139
+         H2ID0140 140
+         H2ID0141 141
+         H2ID0142 142
+         H2ID0143 143
+         H2ID0144 144
+         H2ID0145 145
+         H2ID0146 146
+         H2ID0147 147
+         H2ID0148 148
+         H2ID0149 149
+         H2ID0150 150
+         H2ID0151 151
+         H2ID0152 152
+         H2ID0153 153
+         H2ID0154 154
+         H2ID0155 155
+         H2ID0156 156
+         H2ID0157 157
+         H2ID0158 158
+         H2ID0159 159
+         H2ID0160 160
+         H2ID0161 161
+         H2ID0162 162
+         H2ID0163 163
+         H2ID0164 164
+         H2ID0165 165
+         H2ID0166 166
+         H2ID0167 167
+         H2ID0168 168
+         H2ID0169 169
+         H2ID0170 170
+         H2ID0171 171
+         H2ID0172 172
+         H2ID0173 173
+         H2ID0174 174
+         H2ID0175 175
+         H2ID0176 176
+         H2ID0177 177
+         H2ID0178 178
+         H2ID0179 179
+         H2ID0180 180
+         H2ID0181 181
+         H2ID0182 182
+         H2ID0183 183
+         H2ID0184 184
+         H2ID0185 185
+         H2ID0186 186
+         H2ID0187 187
+         H2ID0188 188
+         H2ID0189 189
+         H2ID0190 190
+         H2ID0191 191
+         H2ID0192 192
+         H2ID0193 193
+         H2ID0194 194
+         H2ID0195 195
+         H2ID0196 196
+         H2ID0197 197
+         H2ID0198 198
+         H2ID0199 199
+         H2ID0200 200
+         H2ID0201 201
+         H2ID0202 202
+         H2ID0203 203
+         H2ID0204 204
+         H2ID0205 205
+         H2ID0206 206
+         H2ID0207 207-208
+         H2ID0209 209
+         H2ID0210 210
+         H2ID0211 211
+         H2ID0212 212
+         H2ID0213 213-214
+         H2ID0215 215
+         H2ID0216 216
+         H2ID0217 217
+         H2ID0218 218
+         H2ID0219 219
+         H2ID0220 220
+         H2ID0221 221
+         H2ID0222 222
+         H2ID0223 223
+         H2ID0224 224
+         H2ID0225 225
+         H2ID0226 226
+         H2ID0227 227
+         H2ID0228 228
+         H2ID0229 229
+         H2ID0230 230
+         H2ID0231 231
+         H2ID0232 232
+         H2ID0233 233
+         H2ID0234 234
+         H2ID0235 235
+         H2ID0236 236
+         H2ID0237 237
+         H2ID0238 238
+         H2ID0239 239
+         H2ID0240 240
+         H2ID0241 241
+         H2ID0242 242
+         H2ID0243 243
+         H2ID0244 244
+         H2ID0245 245
+         H2ID0246 246
+         H2ID0247 247
+         H2ID0248 248
+         H2ID0249 249
+         H2ID0250 250
+         H2ID0251 251
+         H2ID0252 252
+         H2ID0253 253
+         H2ID0254 254
+         H2ID0255 255
+         H2ID0256 256
+         H2ID0257 257
+         H2ID0258 258
+         H2ID0259 259-262
+         H2ID0263 263
+         H2ID0264 264
+         H2ID0265 265
+         H2ID0266 266
+         H2ID0267 267
+         H2ID0268 268
+         H2ID0269 269
+         H2ID0270 270
+         H2ID0271 271-272
+         H2ID0273 273-274
+         H2ID0275 275
+         H2ID0276 276
+         H2ID0277 277
+         H2ID0278 278
+         H2ID0279 279
+         H2ID0280 280
+         H2ID0281 281
+         H2ID0282 282
+         H2ID0283 283
+         H2ID0284 284
+         H2ID0285 285
+         H2ID0286 286
+         H2ID0287 287
+         H2ID0288 288
+         H2ID0289 289
+         H2ID0290 290-291
+         H2ID0292 292
+         H2ID0293 293
+         H2ID0294 294
+         H2ID0295 295
+         H2ID0296 296
+         H2ID0297 297
+         H2ID0298 298
+         H2ID0299 299
+         H2ID0300 300
+         H2ID0301 301
+         H2ID0302 302
+         H2ID0303 303
+         H2ID0304 304
+         H2ID0305 305
+         H2ID0306 306
+         H2ID0307 307
+         H2ID0308 308
+         H2ID0309 309
+         H2ID0310 310
+         H2ID0311 311
+         H2ID0312 312
+         H2ID0313 313
+         H2ID0314 314
+         H2ID0315 315
+         H2ID0316 316
+         H2ID0317 317
+         H2ID0318 318
+         H2ID0319 319
+         H2ID0320 320
+         H2ID0321 321
+         H2ID0322 322
+         H2ID0323 323
+         H2ID0324 324
+         H2ID0325 325
+         H2ID0326 326
+         H2ID0327 327
+         H2ID0328 328
+         H2ID0329 329
+         H2ID0330 330
+         H2ID0331 331
+         H2ID0332 332
+         H2ID0333 333
+         H2ID0334 334
+         H2ID0335 335
+         H2ID0336 336
+         H2ID0337 337
+         H2ID0338 338
+         H2ID0339 339
+         H2ID0340 340
+         H2ID0341 341
+         H2ID0342 342
+         H2ID0343 343
+         H2ID0344 344
+         H2ID0345 345
+         H2ID0346 346
+         H2ID0347 347-348
+         H2ID0349 349-350
+         H2ID0351 351
+         H2ID0352 352-353
+         H2ID0354 354-355
+         H2ID0356 356
+         H2ID0357 357
+         H2ID0358 358-359
+         H2ID0360 360
+         H2ID0361 361
+         H2ID0362 362
+         H2ID0363 363
+         H2ID0364 364
+         H2ID0365 365-366
+         H2ID0367 367-368
+         H2ID0369 369-370
+         H2ID0371 371-372
+         H2ID0373 373-374
+         H2ID0375 375-377
+         H2ID0378 378-380
+         H2ID0381 381-383
+         H2ID0384 384-386
+         H2ID0387 387-389
+         H2ID0390 390-392
+         H2ID0393 393
+         H2ID0394 394-395
+         H2ID0396 396-397
+         H2ID0398 398-400
+         H2ID0401 401-403
+         H2ID0404 404-406
+         H2ID0407 407-409
+         H2ID0410 410-412
+         H2ID0413 413-416
+         H2ID0417 417-420
+         H2ID0421 421-422
+         H2ID0423 423-424
+         H2ID0425 425-426
+         H2ID0427 427-429
+         H2ID0430 430-433
+         H2ID0434 434
+         H2ID0435 435-436
+         H2ID0437 437
+         H2ID0438 438-449
+         H2ID0450 450-452
+         H2ID0453 453-455
+         H2ID0456 456
+         H2ID0457 457
+         H2ID0458 458
+         H2ID0459 459
+         H2ID0460 460
+         H2ID0461 461
+         H2ID0462 462
+         H2ID0463 463
+         H2ID0464 464
+         H2ID0465 465
+         H2ID0466 466
+         H2ID0467 467
+         H2ID0468 468
+         H2ID0469 469
+         H2ID0470 470
+         H2ID0471 471
+         H2ID0472 472
+         H2ID0473 473
+         H2ID0474 474
+         H2ID0475 475-477
+         H2ID0478 478-480
+         H2ID0481 481-483
+         H2ID0484 484-486
+         H2ID0487 487-490
+         H2ID0491 491-494
+         H2ID0495 495-496
+         H2ID0497 497-498
+         H2ID0499 499
+         H2ID0500 500
+         H2ID0501 501
+         H2ID0502 502
+         H2ID0503 503
+         H2ID0504 504
+         H2ID0505 505
+         H2ID0506 506
+         H2ID0507 507
+         H2ID0508 508
+         H2ID0509 509
+         H2ID0510 510
+         H2ID0511 511
+         H2ID0512 512
+         H2ID0513 513
+         H2ID0514 514
+         H2ID0515 515
+         H2ID0516 516
+         H2ID0517 517
+         H2ID0518 518
+         H2ID0519 519
+         H2ID0520 520
+         H2ID0521 521
+         H2ID0522 522
+         H2ID0523 523
+         H2ID0524 524
+         H2ID0525 525
+         H2ID0526 526
+         H2ID0527 527
+         H2ID0528 528
+         H2ID0529 529
+         H2ID0530 530
+         H2ID0531 531
+         H2ID0532 532
+         H2ID0533 533
+         H2ID0534 534
+         H2ID0535 535
+         H2ID0536 536
+         H2ID0537 537
+         H2ID0538 538
+         H2ID0539 539
+         H2ID0540 540
+         H2ID0541 541
+         H2ID0542 542
+         H2ID0543 543
+         H2ID0544 544
+         H2ID0545 545
+         H2ID0546 546
+         H2ID0547 547
+         H2ID0548 548
+         H2ID0549 549
+         H2ID0550 550
+         H2ID0551 551
+         H2ID0552 552
+         H2ID0553 553
+         H2ID0554 554
+         H2ID0555 555
+         H2ID0556 556
+         H2ID0557 557
+         H2ID0558 558
+         H2ID0559 559
+         H2ID0560 560
+         H2ID0561 561
+         H2ID0562 562
+         H2ID0563 563-564
+         H2ID0565 565
+         H2ID0566 566
+         H2ID0567 567
+         H2ID0568 568
+         H2ID0569 569-572
+         H2ID0573 573
+         H2ID0574 574-609
+         H2ID0610 610
+         H2ID0611 611
+         H2ID0612 612
+         H2ID0613 613
+         H2ID0614 614-615
+         H2ID0616 616
+         H2ID0617 617
+         H2ID0618 618-619
+         H2ID0620 620
+         H2ID0621 621-622
+         H2ID0623 623-624
+         H2ID0625 625-626
+         H2ID0627 627-628
+         H2ID0629 629-630
+         H2ID0631 631-632
+         H2ID0633 633-634
+         H2ID0635 635-636
+         H2ID0637 637-638
+         H2ID0639 639-640
+         H2ID0641 641-642
+         H2ID0643 643
+         H2ID0644 644-645
+         H2ID0646 646
+         H2ID0647 647
+         H2ID0648 648-649
+         H2ID0650 650
+         H2ID0651 651-652
+         H2ID0653 653-654
+         H2ID0655 655
+         H2ID0656 656
+         H2ID0657 657-659
+         H2ID0660 660
+         H2ID0661 661
+         H2ID0662 662
+         H2ID0663 663
+         H2ID0664 664
+         H2ID0665 665
+         H2ID0666 666
+         H2ID0667 667-668
+         H2ID0669 669-670
+         H2ID0671 671-672
+         H2ID0673 673-674
+         H2ID0675 675
+         H2ID0676 676
+         H2ID0677 677
+         H2ID0678 678
+         H2ID0679 679
+         H2ID0680 680
+         H2ID0681 681
+         H2ID0682 682
+         H2ID0683 683
+         H2ID0684 684-686
+         H2ID0687 687-689
+         H2ID0690 690-693
+         H2ID0694 694-697
+         H2ID0698 698-701
+         H2ID0702 702-704
+         H2ID0705 705-707
+         H2ID0708 708-711
+         H2ID0712 712-714
+         H2ID0715 715-717
+         H2ID0718 718-720
+         H2ID0721 721-723
+         H2ID0724 724-726
+         H2ID0727 727-729
+         H2ID0730 730-732
+         H2ID0733 733-736
+         H2ID0737 737-739
+         H2ID0740 740-742
+         H2ID0743 743-745
+         H2ID0746 746-748
+         H2ID0749 749-751
+         H2ID0752 752-755
+         H2ID0756 756-759
+         H2ID0760 760-763
+         H2ID0764 764-766
+         H2ID0767 767-769
+         H2ID0770 770-772
+         H2ID0773 773-775
+         H2ID0776 776-778
+         H2ID0779 779-782
+         H2ID0783 783-786
+         H2ID0787 787-788
+         H2ID0789 789-790
+         H2ID0791 791-792
+         H2ID0793 793-794
+         H2ID0795 795
+         H2ID0796 796
+         H2ID0797 797-800
+         H2ID0801 801-804
+         H2ID0805 805-806
+         H2ID0807 807
+         H2ID0808 808-810
+         H2ID0811 811-813
+         H2ID0814 814-816
+         H2ID0817 817-819
+         H2ID0820 820-822
+         H2ID0823 823-825
+         H2ID0826 826-828
+         H2ID0829 829-831
+         H2ID0832 832-834
+         H2ID0835 835-837
+         H2ID0838 838-840
+         H2ID0841 841-843
+         H2ID0844 844-846
+         H2ID0847 847-849
+         H2ID0850 850-852
+         H2ID0853 853-855
+         H2ID0856 856-858
+         H2ID0859 859-861
+         H2ID0862 862-864
+         H2ID0865 865-867
+         H2ID0868 868-870
+         H2ID0871 871-873
+         H2ID0874 874-876
+         H2ID0877 877-879
+         H2ID0880 880-882
+         H2ID0883 883-885
+         H2ID0886 886-888
+         H2ID0889 889-891
+         H2ID0892 892-894
+         H2ID0895 895-897
+         H2ID0898 898-900
+         H2ID0901 901
+         H2ID0902 902-906
+         H2ID0907 907-910
+      ;
+
+      LABEL
+         SEQN = "SAMPLE SEQUENCE NUMBER"
+         H2ID0005 = "BLANK-AVAILABLE FOR TAE USER PURPOSES"
+         H2ID0015 = "NUMBER OF CONTACTS WITH PARENT OR GU ..."
+         H2ID0016 = "FINAL ADJUSTED WEIGHT: POPULATION FA ..."
+         H2ID0021 = "DATE OF EXAMINATION(MONTH, DAY, YEAR)"
+         H2ID0027 = "DATE OF BIRTH (MONTH, DAY, YEAR)"
+         H2ID0033 = "BACKGROUND CHARACTERISTICS OF EXAMIN ..."
+         H2ID0034 = "RACE"
+         H2ID0035 = "SEX-RACE RECODE"
+         H2ID0036 = "AGE"
+         H2ID0038 = "AGE-SEX RECODE"
+         H2ID0040 = "AGE-6 MONTH INTERVALS"
+         H2ID0042 = "AGE-4 MONTH INTERVALS"
+         H2ID0044 = "AGE- IN MONTHS (072-145)"
+         H2ID0047 = "GRADE IN SCHOOL"
+         H2ID0048 = "TWIN STATUS"
+         H2ID0049 = "BLANK"
+         H2ID0050 = "DEMOGRAPHIC REGION"
+         H2ID0051 = "POPULATION SIZE "
+         H2ID0052 = "RATE OF POPULATION CHANGE"
+         H2ID0053 = "SIZE OF PLACE"
+         H2ID0054 = "SMSA-NOTSMSA"
+         H2ID0055 = "LAND USAGE"
+         H2ID0056 = "FAMILY INCOME (ANNUAL)"
+         H2ID0058 = "FIRST LISTED PARENT OR GUARDIAN-RELA ..."
+         H2ID0059 = "SECOND LISTED PARENT OR GUARDIAN-REL ..."
+         H2ID0060 = "PARENTAL RELATIONSHIPS TO CHILD OF 1 ..."
+         H2ID0061 = "EDUCATION OF FIRST LISTED PARENT-COM ..."
+         H2ID0063 = "RACE OF FIRST LISTED PARENT"
+         H2ID0065 = "RACE OF SECOND LISTED PARENT"
+         H2ID0066 = "SEX OF FIRST LISTED PARENT"
+         H2ID0067 = "AGE OF FIRST LISTED PARENT (AT TIME  ..."
+         H2ID0068 = "SEX OF SECOND LISTED PARENT"
+         H2ID0069 = "AGE OF FIRST LISTED PARENT (AT TIME  ..."
+         H2ID0071 = "AGE OF SECOND LISTED PARENT (AT TIME ..."
+         H2ID0073 = "PLACE OF BIRTH OF FIRST LISTED PAREN ..."
+         H2ID0074 = "PLACE OF BIRTH OF SECOND LISTED PARE ..."
+         H2ID0075 = "HANDEDNESS OF FIRST LISTED PARENT"
+         H2ID0076 = "HANDEDNESS OF SECOND LISTED PARENT"
+         H2ID0077 = "USUAL ACTIVITY OF FIRST LISTED PARENT"
+         H2ID0078 = "USUAL ACTIVITY OF SECOND  LISTED PARENT"
+         H2ID0079 = "MATERIAL STATUS OF FIRST LISTED PARENT"
+         H2ID0080 = "MATERIAL STATUS OF SECOND LISTED PARENT"
+         H2ID0081 = "OTHER CHILDREN, NOT LIVING IN HOUSEHOLD"
+         H2ID0082 = "NUMBER OF PERSONS IN HOUSEHOLD 20 YE ..."
+         H2ID0083 = "AGE ORDER OF CHILD (AMONG PERSONS IN ..."
+         H2ID0084 = "TOTAL NUMBER OF PERSONS IN THE HOUSE ..."
+         H2ID0086 = "FOREIGN LANGUAGE SPOKEN IN THE HOME"
+         H2ID0087 = "MARTIAL HISTORY OF HUSBAND AND WIFE"
+         H2ID0089 = "YEAR LATEST MARRIAGE DETERMINED"
+         H2ID0091 = "WIFE"
+         H2ID0092 = "YEAR WIFE'S PREVIOUS MARRIAGE TERMINATED"
+         H2ID0094 = "REASON FOR TERMINATION OF WIFE'S PRE ..."
+         H2ID0095 = "TOTAL MARRIAGES OF WIFE"
+         H2ID0096 = "HUSBAND"
+         H2ID0097 = "YEAR PREVIOUS MARRIAGE TERMINATED"
+         H2ID0099 = "HUSBAND (MARITAL HISTORY)"
+         H2ID0100 = "TOTAL MARRIAGES OF (HUSBAND)"
+         H2ID0101 = "HOUSEHOLD HEALTH EPISODES OVER PAST  ..."
+         H2ID0102 = "SOMEONE CONFINED TO BED AT HOME FOR  ..."
+         H2ID0103 = "YEAR OF OCCURRENCE OF EPISODE#1"
+         H2ID0105 = "SOMEONE CONFINED TO BED AT HOME FOR  ..."
+         H2ID0106 = "YEAR OF OCCURRENCES OF #1 EPISODE"
+         H2ID0108 = "SOMEONE UNABLE TO WORK OR CARRY ON U ..."
+         H2ID0109 = "YEAR OF OCCURRENCE OF EPISODE#3"
+         H2ID0111 = "SOMEONE DIED WHILE LIVING IN HOUSEHOLD"
+         H2ID0112 = "YEAR OF OCCURRENCE OF EPISODE #4"
+         H2ID0114 = "BIRTH CERTIFICATE INFORMATION AVAILABLE"
+         H2ID0115 = "SATE OF BIRTH"
+         H2ID0117 = "PLACE OF BIRTH"
+         H2ID0118 = "RESIDENCE OF MOTHER"
+         H2ID0119 = "AGE OF FATHER"
+         H2ID0121 = "AGE OF MOTHER (IN YEARS)"
+         H2ID0123 = "BIRTH PLACE OF FATHER"
+         H2ID0124 = "BIRTH PLACE OF MOTHER"
+         H2ID0125 = "RACE OF FATHER"
+         H2ID0126 = "RACE OF MOTHER"
+         H2ID0127 = "NUMBER CHILDREN (BORN TO MOTHER) ALL ..."
+         H2ID0129 = "ALL OTHER CHILDREN BORN ALIVE, NOW DEAD"
+         H2ID0131 = "ALL OTHER CHILDREN BORN DEAD (INCLUD ..."
+         H2ID0133 = "ATTENDANT AT BIRTH"
+         H2ID0134 = "LENGTH OF PREGNANCY"
+         H2ID0136 = "WEIGHT AT BIRTH"
+         H2ID0140 = "NUMBER AT BIRTH"
+         H2ID0141 = "BIRTH ORDER-MULTIPLE BIRTHS"
+         H2ID0142 = "LEGITIMACY"
+         H2ID0143 = "CONGENITAL MALFORMATION"
+         H2ID0144 = "COMPLICATIONS OF PREGNANCY AND LABOR"
+         H2ID0145 = "BIRTH INJURY"
+         H2ID0146 = "PROPHYLACTIC DRUG USED IN EYES"
+         H2ID0147 = "INDUCTION ATTEMPTED"
+         H2ID0148 = "BORN IN HOSPITAL"
+         H2ID0149 = "LENGTH OF STAY OF MOTHER IN HOSPITAL"
+         H2ID0150 = "LENGTH OF STAY OF BABY IN HOSPITAL"
+         H2ID0151 = "WEIGHT AT BIRTH"
+         H2ID0152 = "ARRIVAL OF BABY AS EXPECTED"
+         H2ID0153 = "IF EARLY, HOW EARLY"
+         H2ID0154 = "ANYTHING WRONG WITH BABY "
+         H2ID0155 = "ANY MEDICAL PROBLEM OR COMPLICATIONS ..."
+         H2ID0156 = "PREVIOUS PREGNANCIES"
+         H2ID0157 = "DOCTOR SEEN DURING PREGNANCY"
+         H2ID0158 = "MONTHS PREGNANT WHEN FIRST SAW DOCTOR"
+         H2ID0159 = "TIMES DOCTOR SEEN"
+         H2ID0160 = "TROUBLE WITH PREGNANCY OR BIRTH"
+         H2ID0161 = "HEALTH OF BABY AT ONE YEAR"
+         H2ID0162 = "ANYTHING WRONG WITH CHILD AS A BABY"
+         H2ID0163 = "DOCTOR SEEN ABOUT TROUBLE"
+         H2ID0164 = "BREAST FED"
+         H2ID0165 = "MONTHS BREAST FED"
+         H2ID0166 = "ACCEPTANCE OF CHANGE FROM BREAST FEEDING"
+         H2ID0167 = "AGE FIRST WALKED"
+         H2ID0168 = "AGE SPOKE FIRST REAL WORD"
+         H2ID0169 = "LEARNING SPEEDS"
+         H2ID0170 = "KINDERGARTEN OR NURSERY SCHOOL"
+         H2ID0171 = "CHILD'S PRESENTS HEALTH"
+         H2ID0172 = "CURRENT HEALTH PROBLEM(S) OF CHILD T ..."
+         H2ID0173 = "THUMB SUCKED AT PRESENT TIME"
+         H2ID0174 = "FREQUENCY OF THUMB SUCKING"
+         H2ID0175 = "REGULAR MEDICINE"
+         H2ID0176 = "MEDICINE UNDER DOCTOR'S ORDER"
+         H2ID0177 = "BED WETTER AT PRESENT TIME"
+         H2ID0178 = "FREQUENCY OF BED WETTING"
+         H2ID0179 = "BROKEN BONES"
+         H2ID0180 = "KNOCKED UNCONSCIOUS"
+         H2ID0181 = "SCAR FROM BURN"
+         H2ID0182 = "OTHER ACCIDENT"
+         H2ID0183 = "TONSILS OUT"
+         H2ID0184 = "OTHER OPERATIONS"
+         H2ID0185 = "HOSPITALIZATION FOR OTHER SICKNESS O ..."
+         H2ID0186 = "CHILDHOOD DISEASES SCARLET FEVER"
+         H2ID0187 = "RHEUMATIC FEVER"
+         H2ID0188 = "POLIO"
+         H2ID0189 = "DIPHTHERIA"
+         H2ID0190 = "MENINGITIS OR SLEEPING SICKNESS"
+         H2ID0191 = "TUBERCULOSIS"
+         H2ID0192 = "DIABETES OR SUGAR DIABETES"
+         H2ID0193 = "EPILEPSY"
+         H2ID0194 = "CHOREA OR ST. VITUS' DANCE"
+         H2ID0195 = "CEREBRAL PALSY"
+         H2ID0196 = "WHOOPING COUGH"
+         H2ID0197 = "OTHER ILLNESSES OR CONDITIONS ASTHMA"
+         H2ID0198 = "HAY FEVER"
+         H2ID0199 = "ANY OTHER KINDS OF ALLERGIES"
+         H2ID0200 = "OTHER ILLNESSES OR CONDITIONS-ANY TR ..."
+         H2ID0201 = "A HEART MURMUR"
+         H2ID0202 = "ANYTHING WRONG WITH HIS (HER) HEARTS"
+         H2ID0203 = "A CONVULSION"
+         H2ID0204 = "OTHER ILLNESSES OR CONDITIONS-A FIT"
+         H2ID0205 = "MEASLES"
+         H2ID0206 = "AGE HAD MEASLES"
+         H2ID0207 = "SICK LONGER THAN USUAL (MEASLES)"
+         H2ID0209 = "OTHER ILLNESSES OR CONDITIONS-HOSPIT ..."
+         H2ID0210 = "FEVER MORE THAN WEEK (MEASLES)"
+         H2ID0211 = "SLEEPY AFTER MEASLES"
+         H2ID0212 = "MUMPS"
+         H2ID0213 = "AGE HAD MUMPS"
+         H2ID0215 = "SICK LONGER THAN USUAL WITH MUMPS"
+         H2ID0216 = "SICK LONGER THAN USUAL (MEASLES)"
+         H2ID0217 = "FEVER MORE THAN WEEK WITH MUMPS"
+         H2ID0218 = "SLEEPY AFTER MUMPS"
+         H2ID0219 = "SORE THROATS"
+         H2ID0220 = "COLDS"
+         H2ID0221 = "COUGHS"
+         H2ID0222 = "BRONCHITIS"
+         H2ID0223 = "CHEST COLDS"
+         H2ID0224 = "CROSSED EYES"
+         H2ID0225 = "OPERATION ON EYES"
+         H2ID0226 = "OTHER EYE TROUBLE"
+         H2ID0227 = "GLASSES OR CONTACT LENSES"
+         H2ID0228 = "IF GLASSES ARE NOT WORN: DOES HE (SH ..."
+         H2ID0229 = "DO HIS (HER) EYES OR EYELIDS EVER SW ..."
+         H2ID0230 = "DOES HE(SHE) EVER HAVE STYES, INFECT ..."
+         H2ID0231 = "DO HIS (HER) EYES OFTEN WATER?"
+         H2ID0232 = "ARE HIS (HER) EYES OFTEN BLOODSHOT?"
+         H2ID0233 = "DOES HE(SHE) EVER SAY THAT HIS (HER  ..."
+         H2ID0234 = "DOES BRIGHT LIGHT BOTHER HIS (HER) EYES?"
+         H2ID0235 = "DOES HE (SHE) EVER SEE DOUBLE OR SEE ..."
+         H2ID0236 = "HAVE YOU SEEN HIM (HER) OFTEN RUB HI ..."
+         H2ID0237 = "DOES HE (SHE) SOMETIMES CLOSE COVER  ..."
+         H2ID0238 = "HEARING TROUBLE"
+         H2ID0239 = "EAR ACHES"
+         H2ID0240 = "INJURY TO EARS"
+         H2ID0241 = "EARDRUMS OPENED OR LANCED"
+         H2ID0242 = "IF YES, TIMES EARDRUMS OPENED OR LANCED"
+         H2ID0243 = "OTHER EAR OPERATIONS"
+         H2ID0244 = "RUNNING EAR"
+         H2ID0245 = "IF YES, FREQUENCY OF RUNNING EAR"
+         H2ID0246 = "IF YES, LEFT, RIGHT OR BOTH EARS?"
+         H2ID0247 = "OTHER EAR TROUBLE"
+         H2ID0248 = "TALKING PROBLEMS"
+         H2ID0249 = "IF YES, NATURE OF TALKING PROBLEM"
+         H2ID0250 = "TROUBLE WALKING"
+         H2ID0251 = "ARM OR LEG WEAKNESS OR PARALYSIS"
+         H2ID0252 = "HARD EXERCISING OR PLAYING EVER REST ..."
+         H2ID0253 = "IF YES, DID DOCTOR ORDER THIS "
+         H2ID0254 = "IF YES, IS CHILD PRESENTLY RESTRICTED"
+         H2ID0255 = "LAST TIME BEEN TO A DOCTOR"
+         H2ID0256 = "LAST TIME BEEN TO A DENTIST"
+         H2ID0257 = "EVER HAD TEETH STRAIGHTENED OR HAD B ..."
+         H2ID0258 = "IF NO, DO TEETH NEED STRAIGHTENING"
+         H2ID0259 = "TIME USUALLY GOES TO BED WHEN NEXT D ..."
+         H2ID0263 = "DO CERTAIN KINDS OF T.V. OR RADIO PR ..."
+         H2ID0264 = "DOES CHILD HAVE BAD (UNPLEASANT) DRE ..."
+         H2ID0265 = "WALK IN SLEEP"
+         H2ID0266 = "EVER SLEPT OVERNIGHT AT FRIENDS HOME"
+         H2ID0267 = "IF EVER SLEPT OVERNIGHT AT FRIENDS,  ..."
+         H2ID0268 = "SLEEPING ARRANGEMENTS AT HOME"
+         H2ID0269 = "CHILD SAYS IS AFRAID TO BE LEFT ALON ..."
+         H2ID0270 = "HAVE GIRL'S MONTHLY PERIODS STARTED"
+         H2ID0271 = "AGE WHEN PERIODS STARTED (YEAR)"
+         H2ID0273 = "AGE WHEN PERIODS STARTED (MONTH)"
+         H2ID0275 = "CHILD'S MEDICAL HISTORY-INTERVIEWER  ..."
+         H2ID0276 = "NUMBER OF MEALS EATEN YESTERDAY WITH ..."
+         H2ID0277 = "AMOUNT OF FOOD EATEN"
+         H2ID0278 = "SELECTIVITY OF FOODS"
+         H2ID0279 = "NUMBER OF MEALS USUALLY EATEN WITH F ..."
+         H2ID0280 = "REGULAR TASKS OR JOB AS PART OF FAMI ..."
+         H2ID0281 = "DOES CHILD HAVE PET AND TAKES CARE OF IT"
+         H2ID0282 = "NUMBER OF FRIENDS"
+         H2ID0283 = "COMPARATIVE AGE OF FRIENDS"
+         H2ID0284 = "HOW MANY FRIENDS PARENT KNOWS"
+         H2ID0285 = "REACTION OF MEETING NEW CHILDREN OR  ..."
+         H2ID0286 = "HOW WELL GETS ALONG WITH OTHER CHILDREN"
+         H2ID0287 = "EVER 'RUN AWAY FROM HOME'"
+         H2ID0288 = "REASON GIVEN FOR RUNNING AWAY"
+         H2ID0289 = "ANYTHING EVER HAPPEN TO SERIOUSLY UP ..."
+         H2ID0290 = "AGE OF CHILD AT TIME OF DISTURBANCE"
+         H2ID0292 = "RATING OF HOW RELAXED, TENSE OR NERV ..."
+         H2ID0293 = "TEMPERAMENT"
+         H2ID0294 = "SPECIAL CLASSES, CLUBS OR GROUP ACTI ..."
+         H2ID0295 = "BIBLE SCHOOL, CHOIR, OTHER RELIGIOUS ..."
+         H2ID0296 = "LITTLE LEAGUE, BOWLING, SWIMMING, RI ..."
+         H2ID0297 = "MUSIC, PAINTING, DANCING AND SCULPTURING"
+         H2ID0298 = "SOME OTHER ACTIVITY NOT LISTED IN A- ..."
+         H2ID0299 = "TIME SPENT ON USUAL DAY AWAY FROM HO ..."
+         H2ID0300 = "TIME SPENT ON USUAL DAY FOR VARIOUS  ..."
+         H2ID0301 = "TIME SPENT LISTENING TO RADIO"
+         H2ID0302 = "TIME SPENT READING NEWSPAPERS, COMIC ..."
+         H2ID0303 = "TIME SPENT READING BOOKS (EXCEPT COM ..."
+         H2ID0304 = "TIME SPENT WITH FRIENDS"
+         H2ID0305 = "TIME SPENT PLAYING BY SELF"
+         H2ID0306 = "TIME SPENT WORKING (DOING CHORES)"
+         H2ID0307 = "EVER HAD, OVER A CONSIDERABLE PERIOD ..."
+         H2ID0308 = "GET TO SLEEP AFTER HAS GONE TO BED"
+         H2ID0309 = "TAKE A NAP WHEN LITTLE"
+         H2ID0310 = "CHILD'S BEST AND WORST POINTS MENTIONED"
+         H2ID0311 = "QUESTIONNAIRE INFORMATION AVAILABILITY"
+         H2ID0312 = "GRADE QUALIFICATION GIVEN"
+         H2ID0313 = "GRADE(S) SKIPPED OR DOUBLE PROMOTION ..."
+         H2ID0314 = "GRADE(S REPEATED"
+         H2ID0315 = "REASON GRADE REPEATED"
+         H2ID0316 = "ABSENT FROM SCHOOL AN UNUSUAL NUMBER ..."
+         H2ID0317 = "MAIN REASON FOR UNUSUAL ABSENCE"
+         H2ID0318 = "SPECIAL RESOURCES RECOMMENDATION, AV ..."
+         H2ID0319 = "B. 'SIGHT SAVING'"
+         H2ID0320 = "C. SPEECH THERAPY"
+         H2ID0321 = "D. ORTHORPEDICALLY HANDICAPPED"
+         H2ID0322 = "E. GIFTED CHILD"
+         H2ID0323 = "F. SLOWER LEARNER"
+         H2ID0324 = "G. CLASS FOR MENTALLY RETARDED"
+         H2ID0325 = "H. EMOTIONALLY DISTURBED"
+         H2ID0326 = "I. 'OTHER' RESOURCES"
+         H2ID0327 = "J. ANY RESOURCE RECOMMENDED"
+         H2ID0328 = "ADJUSTMENT EVALUATION"
+         H2ID0329 = "ATTENTION SPAN (COMPARED TO OTHERS O ..."
+         H2ID0330 = "RESTLESS CLASSROOM MOVEMENT ( COMPAR ..."
+         H2ID0331 = "CHILD BEHAVIOR CHARACTERISTICS A. OT ..."
+         H2ID0332 = "B. TOO 'ROUGH' WITH OTHER CHILDREN"
+         H2ID0333 = "C. FREQUENTLY INJURED"
+         H2ID0334 = "D. AGGRESSIVE BEHAVIOR (FREQUENTLY M ..."
+         H2ID0335 = "E. CHILD FREQUENTLY COMPLAIN THAT HE ..."
+         H2ID0336 = "F. OTHER CHILDREN'S PARENTS COMPLAIN ..."
+         H2ID0337 = "G. NO METHOD OF DISCIPLINE SEEMS TO WORK"
+         H2ID0338 = "H. NO BASIS FOR JUDGING CHILD CHARAC ..."
+         H2ID0339 = "I. ANY OF ABOVE (A-H) APPLY"
+         H2ID0340 = "FREQUENCY OF SPECIFIC DISCIPLINARY A ..."
+         H2ID0341 = "FREQUENCY OF BEING CHOSEN WHEN CHILD ..."
+         H2ID0342 = "FREQUENCY OF BEING CHOSEN AS LEADER  ..."
+         H2ID0343 = "JUDGED INTELLECTUAL ABILITY (FOR AGE)"
+         H2ID0344 = "JUDGED ACADEMIC PERFORMANCE (FOR AGE)"
+         H2ID0345 = "TIME KNOWN (BY RATER)"
+         H2ID0346 = "CAPACITY RATER KNOWS CHILD"
+         H2ID0347 = "F. PSYCHOLOGICAL EXAMINATION WISC. W ..."
+         H2ID0349 = "BLOCK DESIGN RAW SCORES (ACTUAL RANG ..."
+         H2ID0351 = "VOC. AND E. D. TEST QUALIFICATIONS"
+         H2ID0352 = "WRAT (WIDE RANGE ACHIEVEMENT TEST) R ..."
+         H2ID0354 = "TEST LEVEL GIVEN"
+         H2ID0356 = "ARITHMETIC RAW SCORE (ACTUAL RANGE 0 ..."
+         H2ID0357 = "READING AND ARITHMETIC TEST QUALIFIC ..."
+         H2ID0358 = "HARRIS-GOOD ENOUGH DRAW A PERSON TES ..."
+         H2ID0360 = "SEX OF DRAWING BY SEX OF CHILD"
+         H2ID0361 = "CLASS A DRAWING  (AIMLESS SCRIBBLING ..."
+         H2ID0362 = "H-G TEST QUALIFICATION"
+         H2ID0363 = "OTHER PSYCHOLOGICAL DATA OBTAINED FR ..."
+         H2ID0364 = "A FOREIGN LANGUAGE PROBLEM NOTED"
+         H2ID0365 = "NORMALIZED STANDARD SCORES T-SCORES  ..."
+         H2ID0367 = "BLOCK DESIGN RANGE: 19-81"
+         H2ID0369 = "WRAT READING RANGE: 14-86"
+         H2ID0371 = "ARITHMETIC RANGE: 16-88"
+         H2ID0373 = "H-G DRAW A PERSON RANGE: 17-83"
+         H2ID0375 = "COMPOSITE T-SCORES SUM VOCABULARY PL ..."
+         H2ID0378 = "SUM READING PLUS ARITHMETIC T-SCORES ..."
+         H2ID0381 = "SUM OF ALL 5 TEST' T-SCORES (094-378)"
+         H2ID0384 = "NORMALIZED STANDARD SCORES-CONT'D. I ..."
+         H2ID0387 = "INDEX OF EDUCATIONAL ACHIEVEMENT"
+         H2ID0390 = "COMPOSITE INDEX OF MEASURED PERFORMANCE"
+         H2ID0393 = "DESCRIPTIVE  LEVELS FOR INTELLECTUAL ..."
+         H2ID0394 = "WISC: BASED ON 4 MONTH AGE INTERVALS ..."
+         H2ID0396 = "BLOCK DESIGN (X= 10.0; S.D.=3.0, RAN ..."
+         H2ID0398 = "DEVIATION I.Q. ESTIMATE (X=100.0;S.D ..."
+         H2ID0401 = "H-G DRAW A PERSON TEST: BASED ON A 1 ..."
+         H2ID0404 = "ARITHMETIC (X=100.0; S.D=15.0, RANGE ..."
+         H2ID0407 = "COMPOSITE READING PLUS ARITHMETIC ST ..."
+         H2ID0410 = "H-G DRAW A PERSON TEST: BASED ON 1 Y ..."
+         H2ID0413 = "READING GRADE EQUIVALENTS (RANGE 002 ..."
+         H2ID0417 = "ARITHMETIC GRADE EQUIVALENTS (RANGE  ..."
+         H2ID0421 = "VOCABULARY TEST (00-20)"
+         H2ID0423 = "BLOCK DESIGN TEST (00-20)"
+         H2ID0425 = "SUM OF WISC S.S. FOR VOCABULARY AND  ..."
+         H2ID0427 = "ESTIMATED FULL SCALE WISC I.Q. BASED ..."
+         H2ID0430 = "ESTIMATED FULL SCALE WISC I.Q. DERIV ..."
+         H2ID0434 = "DESCRIPTIVE CATEGORIES OF ESTIMATED  ..."
+         H2ID0435 = "STRATA"
+         H2ID0437 = "PSEUDO PRIMARY SAMPLING UNIT (PPSU)"
+         H2ID0438 = "BLANK"
+         H2ID0450 = "G. PHYSICAL EXAMINATION- TEMPERATURE ..."
+         H2ID0453 = "PULSE RATE-PHYSICAL EXAMINATION"
+         H2ID0456 = "GENERAL APPEARANCE TICS OR MANNERISMS"
+         H2ID0457 = "FINGER SUCKING"
+         H2ID0458 = "NAIL BITING"
+         H2ID0459 = "AXILLARY HAIR"
+         H2ID0460 = "BREST DEVELOPMENT"
+         H2ID0461 = "EYES-FINDINGS"
+         H2ID0462 = "STYE"
+         H2ID0463 = "CONJUNCTIVITIS"
+         H2ID0464 = "BLEPHARITIS"
+         H2ID0465 = "STRABISMUS"
+         H2ID0466 = "STRABISMUS MANIFEST-RIGHT"
+         H2ID0467 = "MANIFEST-LEFT"
+         H2ID0468 = "STRABISMUS LATENT-RIGHT"
+         H2ID0469 = "LATENT-LEFT"
+         H2ID0470 = "FINDINGS-OBSERVATION"
+         H2ID0471 = "FINDING-MOVING LIGHT"
+         H2ID0472 = "FINDINGS-HIRCHBERG TEST"
+         H2ID0473 = "FINDINGS-SCREEN"
+         H2ID0474 = "FINDINGS-OTHER"
+         H2ID0475 = "BLOOD PRESSURE (CODED AS ENTERED) SY ..."
+         H2ID0478 = "DIASTOLIC-(FIRST READING)RANGE 34-108"
+         H2ID0481 = "SYSTOLIC-(SECOND READING)RANGE 72-166"
+         H2ID0484 = "DIASTOLIC-(SECOND READING) RANGE 20-110"
+         H2ID0487 = "AVERAGE SYSTOLIC (RANGE 82.0-16030"
+         H2ID0491 = "AVERAGE DIASTOLIC (RANGE 28.0-109.0"
+         H2ID0495 = "AVERAGE SYSTOLIC B.P."
+         H2ID0497 = "HEART EXAMINATION CONT'D.-AVERAGE DI ..."
+         H2ID0499 = "NEUROMUSCULAR AND JOINT SUMMARY"
+         H2ID0500 = "EXTREMITIES"
+         H2ID0501 = "HEART EXAMINATION SUMMARY POINT OF M ..."
+         H2ID0502 = "MIDCLAVICULAR LINE "
+         H2ID0503 = "THRILLS"
+         H2ID0504 = "SYSTOLIC-DIASTOLIC"
+         H2ID0505 = "HEART EXAMINATION SUMMARY-CONT'D. BA ..."
+         H2ID0506 = "SOUNDS AT BASE-A. MURMUR "
+         H2ID0507 = "B. MURMUR (SIGNIFICANCE)"
+         H2ID0508 = "C. OTHER MURMURS"
+         H2ID0509 = "ECG"
+         H2ID0510 = "CHEST X-RAY"
+         H2ID0511 = "HISTORY (HEART CONDITION)"
+         H2ID0512 = "EAR, NOSE, AND THROAT EXAMINATION-EX ..."
+         H2ID0513 = "LEFT EAR"
+         H2ID0514 = "PINNA-RIGHT EAR"
+         H2ID0515 = "PINNA-LEFT EAR"
+         H2ID0516 = "AURICULAR REGION-RIGHT"
+         H2ID0517 = "AURICULAR REGION-LEFT"
+         H2ID0518 = "AUDITORY CANAL RIGHT EAR"
+         H2ID0519 = "LEFT EAR"
+         H2ID0520 = "OCCLUDED RIGHT"
+         H2ID0521 = "OCCLUDED LEFT"
+         H2ID0522 = "DRUM RIGHT EAR"
+         H2ID0523 = "LEFT EAR"
+         H2ID0524 = "DRUM MOBILE RIGHT EAR"
+         H2ID0525 = "LEFT EAR"
+         H2ID0526 = "DULL RIGHT EAR"
+         H2ID0527 = "LEFT EAR"
+         H2ID0528 = "TRANSPARENT-OPAQUE RIGHT EAR"
+         H2ID0529 = "LEFT EAR"
+         H2ID0530 = "BULGING-RETRACTED RIGHT EAR"
+         H2ID0531 = "LEFT EAR"
+         H2ID0532 = "COLORATION RIGHT EAR"
+         H2ID0533 = "LEFT EAR"
+         H2ID0534 = "PERFORATED RIGHT"
+         H2ID0535 = "LEFT EAR"
+         H2ID0536 = "SCARS RIGHT EAR"
+         H2ID0537 = "LEFT EAR"
+         H2ID0538 = "TONSILS     "
+         H2ID0539 = "ORAL PHARYNX"
+         H2ID0540 = "A. CLEFT PLATE"
+         H2ID0541 = "B. HYPERTROPIC LYMPHOID TISSUE"
+         H2ID0542 = "C. HEAVY POSTNASAL DISCHARGE"
+         H2ID0543 = "D. OTHER PHARYNX"
+         H2ID0544 = "NONE RIGHT "
+         H2ID0545 = "LEFT   "
+         H2ID0546 = "DEVIATED SEPTUM RIGHT"
+         H2ID0547 = "LEFT"
+         H2ID0548 = "HYPERTROPHY OF TURBINATES RIGHT"
+         H2ID0549 = "LEFT"
+         H2ID0550 = "POLYPS RIGHT"
+         H2ID0551 = "LEFT"
+         H2ID0552 = "OBSTRUCTION RIGHT"
+         H2ID0553 = "LEFT"
+         H2ID0554 = "PROFUSE DISCHARGE"
+         H2ID0555 = "SWOLLEN TISSUE"
+         H2ID0556 = "MOUTH BREATHING"
+         H2ID0557 = "OTHER (NOSE)"
+         H2ID0558 = "OVERALL EVALUATION OF FINDINGS"
+         H2ID0559 = "ACCIDENTS OR INJURIES"
+         H2ID0560 = "HEART DISEASE"
+         H2ID0561 = "CONGENITAL OR ACQUIRED HEART DISEASE"
+         H2ID0562 = "NEUROLOGICAL, MUSCULAR AND JOINT CON ..."
+         H2ID0563 = "TYPE OF NEUROLOGICAL, MUSCULAR AND J ..."
+         H2ID0565 = "NEUROLOGICAL, MUSCULAR, AND JOIN CON ..."
+         H2ID0566 = "OTHER CONGENITAL ABNORMALITIES"
+         H2ID0567 = "OTHER MAJOR DISEASES"
+         H2ID0568 = "SUMMARY FOR MEDICAL REPORT TO PARENT ..."
+         H2ID0569 = "J. AUDIOMETERY-HEARING-BLANK"
+         H2ID0573 = "CONDITIONS AFFECTING TEST RESULTS"
+         H2ID0574 = "CODES USED TO RECORD DECIBELS FOR FO ..."
+         H2ID0610 = "VISION- WEAR GLASSES FOR TEST"
+         H2ID0611 = "COLOR VISION TEST GIVEN"
+         H2ID0612 = "SCORE ON CV TEST #1 (ISHIHARA) NUMBE ..."
+         H2ID0613 = "SCREENING SCORE C.V. TEST #2 (H-R-R) ..."
+         H2ID0614 = "BLANK"
+         H2ID0616 = "C.V. SEVERITY (R.G.)"
+         H2ID0617 = "C.V. SEVERITY (B.Y.)"
+         H2ID0618 = "BINOCULAR DISTANCE ACUITY"
+         H2ID0620 = "BINOCULAR NEAR ACUITY"
+         H2ID0621 = "L. DENTAL EXAMINATION (CODES INCLUDE ..."
+         H2ID0623 = "NUMBER OF DECAYED PERMANENT TEETH"
+         H2ID0625 = "NUMBER OF FILLED PERMANENT TEETH"
+         H2ID0627 = "TOTAL NUMBER OF DECAYED, MISSING, FI ..."
+         H2ID0629 = "NUMBER OF DECAYED PRIMARY TEETH"
+         H2ID0631 = "NUMBER OF FILLED PRIMARY TEETH"
+         H2ID0633 = "NUMBER OF PRIMARY TEETH NEEDING EXTR ..."
+         H2ID0635 = "TOTAL NUMBER OF PRIMARY TEETH DECAYE ..."
+         H2ID0637 = "NUMBER OF PERMANENT TEETH PRESENT"
+         H2ID0639 = "NUMBER OF PRIMARY TEETH PRESENT"
+         H2ID0641 = "NUMBER OF PERMANENT TEETH ERUPTED"
+         H2ID0643 = "BLANK FIELD"
+         H2ID0644 = "PERIODONTAL INDEX (P.I.) (HIGHER SCO ..."
+         H2ID0646 = "PRESENCE OF GINGIVITIS AND PERIODONT ..."
+         H2ID0647 = "BLANK FIELD"
+         H2ID0648 = "SIMPLIFIED DEBRIS INDEX (DI-S)"
+         H2ID0650 = "BLANK FIELD"
+         H2ID0651 = "SIMPLIFIED CALCULUS INDEX (CI-S)"
+         H2ID0653 = "MALOCCLUSION SYNDROME"
+         H2ID0655 = "EXAMINATION QUALIFICATION"
+         H2ID0656 = "EXAMINATION QUALIFICATION"
+         H2ID0657 = "TPI"
+         H2ID0660 = "BUCCAL SEGMENT RELATION RIGHT"
+         H2ID0661 = "LEFT"
+         H2ID0662 = "POSTERIOR CROSS BITE-NUMBER OF UPPER ..."
+         H2ID0663 = "NUMBER OF UPPER TEETH ON RIGHT-TO LI ..."
+         H2ID0664 = "NUMBER OF UPPER TEETH ON LEFT-TO BUCCAL"
+         H2ID0665 = "NUMBER OF UPPER TEETH ON LEFT-TO LINGUAL"
+         H2ID0666 = "INCISOR VERTICAL RELATIONSHIP"
+         H2ID0667 = "OVER JET"
+         H2ID0669 = "MANDIBULAR PROTRUSION"
+         H2ID0671 = "OVERBITE"
+         H2ID0673 = "OPEN BITE"
+         H2ID0675 = "NUMBER OF MALALIGNED TEETH (MINOR-RO ..."
+         H2ID0676 = "UPPER POSTERIOR"
+         H2ID0677 = "LOWER ANTERIOR "
+         H2ID0678 = "LOWER POSTERIOR"
+         H2ID0679 = "NUMBER OF MALALIGNED TEETH (MAJOR-RO ..."
+         H2ID0680 = "UPPER POSTERIOR"
+         H2ID0681 = "LOWER ANTERIOR "
+         H2ID0682 = "LOWER POSTERIOR"
+         H2ID0683 = "ORTHODONTIC APPLIANCES"
+         H2ID0684 = "M. BODY MEASUREMENTS AND GRIP STRENG ..."
+         H2ID0687 = "FOOT BREADTH RANGE 049-100"
+         H2ID0690 = "KNEE HEIGHT RANGE 297-583"
+         H2ID0694 = "POPLITEAL HEIGHT RANGE 235-461"
+         H2ID0698 = "THIGH CLEARANCE RANGE 045-296"
+         H2ID0702 = "SEAT BREADTH RANG 160-420"
+         H2ID0705 = "ELBOW-ELBOW BREADTH RANGE 183-455"
+         H2ID0708 = "SITTING HEIGHT-ERECT RANGE 541-876"
+         H2ID0712 = "BUTTOCK-POPLITEAL LENGTH RANGE 005-597"
+         H2ID0715 = "BUTTOCK-KEEP LENGTH RANGE 230-618"
+         H2ID0718 = "ELBOW-ELBOW BREADTH RANGE 146-289"
+         H2ID0721 = "HAND LENGTH RANGE 110-188"
+         H2ID0724 = "HAND BREADTH  RANGE 040-087"
+         H2ID0727 = "STANDING (ON STEP) R.BICONDYLAR DIAM ..."
+         H2ID0730 = "R. CALF GIRTH RANGE 180-396"
+         H2ID0733 = "STANDING HEIGHT (TO NEAREST MM) RANG ..."
+         H2ID0737 = "STANDING ( ON FLOOR) (TO NEAREST MM) ..."
+         H2ID0740 = "ACROMION TO OLECRANON RANGE 190-347"
+         H2ID0743 = "CHEST BREADTH 4TH ICS RANGE 151-300"
+         H2ID0746 = "CHEST DEPTH 4TH ICS RANGE 100-239"
+         H2ID0749 = "BIERISTAL DIAMETER RANGE 130-325"
+         H2ID0752 = "CHEST GIRTH RANGE 0485-1060"
+         H2ID0756 = "WAIST GIRTH RANGE 0420-1093"
+         H2ID0760 = "HIP GIRTH RANGE 0470-1185"
+         H2ID0764 = "R. UPPER ARM GIRTH RANGE 059-362"
+         H2ID0767 = "R. LOWER ARM GIRTH RANGE 056-300"
+         H2ID0770 = "SKIN FOLDS (TO NEAREST TENTH OF MM)  ..."
+         H2ID0773 = "R. INFRASCAPULAR RANGE 020-320"
+         H2ID0776 = "R. LAT. CHEST WALL RANGE 020-600"
+         H2ID0779 = "WEIGHT IN POUNDS (TO NEAREST 0.5 LB. ..."
+         H2ID0783 = "IN KILOGRAMS (1LBS. MULTIPLIED BY 0. ..."
+         H2ID0787 = "HEIGHT IN CM. CODED"
+         H2ID0789 = "WEIGHT IN KG. CODED"
+         H2ID0791 = "GRIP STRENGTH (IN POUNDS) (INCLUDES  ..."
+         H2ID0793 = "LEFT HAND-MAXIMUS OF THREE TRIALS RA ..."
+         H2ID0795 = "HANDEDNESS"
+         H2ID0796 = "WAS GRIP STRENGTH TEST SATISFACTORY"
+         H2ID0797 = "SEQUENCE NUMBER"
+         H2ID0801 = "BONE AGE- WORK AREA"
+         H2ID0805 = "READER NUMBER"
+         H2ID0807 = "QUALITY OF FILM"
+         H2ID0808 = "DISTAL END OF RADIUS"
+         H2ID0811 = "DISTAL END OF ULNA"
+         H2ID0814 = "CAPITATE"
+         H2ID0817 = "HAMATE"
+         H2ID0820 = "TRIQUETRAL"
+         H2ID0823 = "LUNATE"
+         H2ID0826 = "SCAPHOID"
+         H2ID0829 = "TRAPESUIM"
+         H2ID0832 = "TRAPEZOID"
+         H2ID0835 = "METACARPAL I"
+         H2ID0838 = "METACARPAL II"
+         H2ID0841 = "METACARPAL III"
+         H2ID0844 = "METACARPAL IV"
+         H2ID0847 = "METACARPAL V"
+         H2ID0850 = "PISIFORM"
+         H2ID0853 = "ADDUCTOR SESAMOID"
+         H2ID0856 = "FLEXOR SESAMOID"
+         H2ID0859 = "PROXIMAL PHALANX I"
+         H2ID0862 = "PROXIMAL PHALANX II"
+         H2ID0865 = "PROXIMAL PHALANX III"
+         H2ID0868 = "PROXIMAL PHALANX IV"
+         H2ID0871 = "PROXIMAL PHALANX V"
+         H2ID0874 = "MIDDLE PHALANX II"
+         H2ID0877 = "MIDDLE PHALANX III"
+         H2ID0880 = "MIDDLE PHALANX IV"
+         H2ID0883 = "MIDDLE PHALANX V"
+         H2ID0886 = "DIGITAL PHALANX I"
+         H2ID0889 = "DIGITAL PHALANX II"
+         H2ID0892 = "DIGITAL PHALANX III"
+         H2ID0895 = "DIGITAL PHALANX IV"
+         H2ID0898 = "DIGITAL PHALANX V"
+         H2ID0901 = "ABNORMALITIES, OTHER"
+         H2ID0902 = "AVERAGE BONE AGE"
+         H2ID0907 = "WORK AREA"
+      ;
+RUN;

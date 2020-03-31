@@ -12,6 +12,7 @@ library(tidyr)
 library(tidyverse)
 library(SASxport)
 library(dplyr)
+require(haven)
 ```
 
 ## load the data
@@ -2205,7 +2206,71 @@ bp_chol_17_18 = read.xport("./2017-2018/BPQ_J.XPT") %>%
   select(seqn, hbp, h_chol)
 ```
 
+```{r nhanesI}
+nhanesI_diet = read.csv("./NHANES I/NHANESI_diet.csv") %>% 
+  janitor::clean_names()
+nhanesI_med_hist12_74 = read.csv("./NHANES I/NHANESI_med_hist_12_74.csv") %>% 
+  janitor::clean_names()
+nhanesI_med_hist_1_11 = read.csv("./NHANES I/NHANESI_med_hist_1_11.csv") %>% 
+  janitor::clean_names()
+med_hist_nhanesi = bind_rows(nhanesI_med_hist_1_11, nhanesI_med_hist12_74)
+nhanesI = merge(nhanesI_diet, med_hist_nhanesi, by = "seqn")
+```
 
+```{r nhanesII}
+adult_med_hist_nhanesII = read.csv("./NHANES II/med_hist_nhanesII_adult.csv") %>% 
+  janitor::clean_names()
+youth_med_hist_nhanesII = read.csv("./NHANES II/nhanesII_med_hist_child.csv") %>% 
+  janitor::clean_names()
+med_hist_nhanesII = bind_rows(adult_med_hist_nhanesII, youth_med_hist_nhanesII)
+ffq_nhanesII = read.csv("./NHANES II/nhanesII_ffq.csv") %>% 
+  janitor::clean_names()
+behavior_nhanesII = read.csv("./NHANES II/NHANESII_behavior.csv") %>% 
+  janitor::clean_names()
+nhanesiia = merge(med_hist_nhanesII, ffq_nhanesII, by = "seqn")
+nhanesII = merge(nhanesiia, behavior_nhanesII, by = "seqn")
+```
+
+
+```{r NHANESIII}
+prescrip_meds_nhanesIII = read.xport("./NHANES III/RXQ_DRUG.xpt") %>% 
+  janitor::clean_names()
+drug_info_nhanesIII = read.xport("./NHANES III/pupremed.xpt") %>% 
+  janitor::clean_names()
+adult_nhanesIII = read.csv("./NHANES III/nhanesIII_adult.csv") %>% 
+  janitor::clean_names()
+youth_nhanesIII = read.csv("./NHANES III/nhanesIII_youth.csv") %>% 
+  janitor::clean_names()
+
+nhanesiii_a= merge(adult_nhanesIII, drug_info_nhanesIII, by = "seqn")
+nhanesIII = bind_rows(youth_nhanesIII, nhanesiii_a)
+
+# combine NHANES I, II, & III
+nhanes_a = bind_rows(nhanesI, nhanesII)
+nhanes_I_II_III = bind_rows(nhanes_a, nhanesIII)
+```
+
+```{r NHES}
+
+#NHESI
+demographics_nhesI = read.csv("./NHES I/nhesI_demographics.csv") %>% 
+  janitor::clean_names()
+
+
+#NHESII
+integrated_data_nhesII = read.csv("./NHES II/nhesii_integrated_data.csv") %>% 
+  janitor::clean_names()
+
+#NHESIII
+extended_data_nhesIII = read.csv("./NHES III/nhesiii_extended_data.csv") %>% 
+  janitor::clean_names()
+
+nhesI = bind_rows(demographics_nhesI, extended_data_nhesII)
+NHES = bind_rows(nhesI, extended_data_nhesIII)
+
+NHES_NHANES = bind_rows(NHES, nhanes_I_II_III)
+```
+ 
 
 
 ```{r combine.datasets}
@@ -2231,7 +2296,8 @@ immunization = bind_rows(immunization_1999_2000, immunization_01_02, immunizatio
 pa = bind_rows(phys_act_1999_2000, phys_act_01_02, phys_act_03_04, phys_act_05_06, phys_act_07_08, phys_act_09_10, phys_act_11_12, phys_act_13_14, phys_act_15_16, phys_act_17_18) %>% 
   select(seqn, moderate, vigorous)
 
-med_cond = bind_rows(med_condit_99_00, med_condit_01_02, med_condit_03_04, med_condit_05_06, med_condit_07_08, med_condit_09_10, med_condit_11_12, med_condit_13_14, med_condit_15_16)
+med_cond = bind_rows(med_condit_99_00, med_condit_01_02, med_condit_03_04, med_condit_05_06, med_condit_07_08, med_condit_09_10, med_condit_11_12, med_condit_13_14, med_condit_15_16) %>% 
+  select(seqn, chd, heart_attack,stroke, thyroid_prob, liver_cond)
 
 bp_chol = bind_rows(bp_chol_99_00, bp_chol_01_02, bp_chol_03_04, bp_chol_05_06, bp_chol_07_08, bp_chol_09_10, bp_chol_11_12, bp_chol_13_14, bp_chol_15_16, bp_chol_17_18)
 
@@ -2251,10 +2317,11 @@ demo_pdrug = merge(demo_hh, p_drug, by = "seqn")
 demo_med = merge(demo_pdrug, med_cond, by = "seqn")
 
 demo_chol = merge(demo_med, bp_chol, by = "seqn")
-demo_all = merge(demo_chol, diet, by = "seqn") 
+demo_nhanesiii = merge(demo_chol, drug_info_nhanesIII, by = "seqn")
+demo_all = merge(demo_nhanesiii, diet, by = "seqn") 
   
 
-demo_x = demo_all %>% 
+new_NHANES = demo_all %>% 
  distinct(seqn, .keep_all = TRUE) %>% 
   mutate(race = as.factor(race),
          diabetes = as.factor(diabetes),
@@ -2272,13 +2339,9 @@ demo_x = demo_all %>%
          stroke = as.factor(stroke),
          thyroid_prob = as.factor(thyroid_prob),
          liver_cond = as.factor(liver_cond),
-         ever_cancer = as.factor(ever_cancer),
-         type_of_cancer = as.factor(type_of_cancer),
          hbp = as.factor(hbp),
          h_chol = as.factor(h_chol),
          ) %>% 
-  filter(ever_cancer == "yes",
-         type_of_cancer %in% c("colon", "rectal")) %>% 
   rename("protein" = drxiprot, 
          "protein" = dr1iprot,
           "total fat" = drxitfat, 
@@ -2293,13 +2356,14 @@ demo_x = demo_all %>%
          "sugar"  = dr1isugr,
          "cholesterol" = dr1ichol,
          "cholesterol" = drxichol) 
+# try setname to rename and then rbind
 
-  
+crc_final = bind_rows(NHES_NHANES, new_NHANES)
 ```
 
 ```{r}
 fit_logistic = demo_x %>% 
-  glm(ever_cancer ~ gender + race + diabetes   + chd + heart_attack + stroke + thyroid_prob + liver_cond , data = ., family = binomial())
+  glm( ~ gender + race + diabetes + chd + heart_attack + stroke + thyroid_prob + liver_cond , data = ., family = binomial())
 
 fit_logistic %>% 
   broom::tidy() %>% 
